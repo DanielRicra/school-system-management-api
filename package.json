@@ -1,0 +1,27 @@
+{
+  "name": "school-system-management",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --hot src/index.ts",
+    "lint": "bunx @biomejs/biome lint --apply ./src",
+    "format": "bunx @biomejs/biome format --write ./src",
+    "check": "bunx @biomejs/biome check --apply ./src",
+    "build": "tsc --build"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.6.4",
+    "@types/bun": "latest",
+    "@types/pg": "8.11.5",
+    "drizzle-kit": "^0.20.14",
+    "typescript": "5.4.5"
+  },
+  "dependencies": {
+    "bcryptjs": "2.4.3",
+    "drizzle-orm": "^0.30.8",
+    "env-var": "7.4.1",
+    "express": "4.19.2",
+    "jsonwebtoken": "9.0.2",
+    "pg": "^8.11.5"
+  }
+}
