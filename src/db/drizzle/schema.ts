@@ -64,6 +64,8 @@ export const rooms = pgTable(
     };
   }
 );
+export type Room = typeof rooms.$inferSelect;
+export type NewRoom = typeof rooms.$inferInsert;
 
 export const classrooms = pgTable("classrooms", {
   id: serial("id").primaryKey(),
