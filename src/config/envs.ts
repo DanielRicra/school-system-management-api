@@ -1,6 +1,12 @@
 import { get } from "env-var";
 
+const isTest = process.env.NODE_ENV === "test";
+
 export const envs = {
-  PORT: get("PORT").required().asPortNumber(),
-  DB_URL: get("DB_URL").required().asString(),
+  PORT: get(isTest ? "VITE_PORT" : "PORT")
+    .required()
+    .asPortNumber(),
+  DB_URL: get(isTest ? "VITE_DB_URL" : "DB_URL")
+    .required()
+    .asString(),
 };
