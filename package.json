@@ -7,6 +7,7 @@
     "db:generate": "drizzle-kit generate:pg",
     "db:migrate": "bun run ./src/db/drizzle/migrate.ts",
     "db:drop": "drizzle-kit drop --config=drizzle.config.ts",
+    "db:seed": "bun run ./src/db/drizzle/seed.ts",
     "lint": "bunx @biomejs/biome lint --apply ./src",
     "format": "bunx @biomejs/biome format --write ./src",
     "check": "bunx @biomejs/biome check --apply ./src",
