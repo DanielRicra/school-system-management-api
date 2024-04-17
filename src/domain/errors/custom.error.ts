@@ -29,4 +29,8 @@ export class CustomError extends Error {
   static internalServerError(message = "Internal server error") {
     return new CustomError(500, message);
   }
+
+  static conflict(message: string) {
+    return new CustomError(409, message);
+  }
 }
