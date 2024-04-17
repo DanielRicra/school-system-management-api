@@ -20,8 +20,12 @@ export class Server {
 
   configure() {
     this.app.use(express.json());
-    // this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(express.urlencoded({ extended: true }));
+    this.app.get("/", (req, res) => res.json({ url: "/api/v1" }));
     this.app.use("/api/v1", this.router);
+    this.app.use((req, res) => {
+      res.status(404).json({ message: "Route not found" });
+    });
   }
 
   async start() {
