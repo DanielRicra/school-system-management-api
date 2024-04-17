@@ -31,9 +31,11 @@
   "dependencies": {
     "bcryptjs": "2.4.3",
     "drizzle-orm": "^0.30.8",
+    "drizzle-valibot": "0.2.0",
     "env-var": "7.4.1",
     "express": "4.19.2",
     "jsonwebtoken": "9.0.2",
-    "pg": "^8.11.5"
+    "pg": "^8.11.5",
+    "valibot": "0.30.0"
   }
 }
