@@ -1,9 +1,14 @@
 import type { RequestHandler } from "express";
 import { MainController } from "../main-controller";
 import type { RoomRepository } from "../../domain/repositories";
-import { GetRooms, GetRoom, CreateRoom } from "../../domain/use-cases";
+import {
+  GetRooms,
+  GetRoom,
+  CreateRoom,
+  UpdateRoom,
+} from "../../domain/use-cases";
 import { computePaginationOffsetAndLimit } from "../utils";
-import { CreateRoomDTO } from "../../domain/dtos/room";
+import { CreateRoomDTO, UpdateRoomDTO } from "../../domain/dtos/room";
 
 export class RoomController extends MainController {
   constructor(private readonly roomRepository: RoomRepository) {
@@ -49,7 +54,19 @@ export class RoomController extends MainController {
   };
 
   updateRoom: RequestHandler = (req, res) => {
-    res.status(501).json({ message: "Not implement yet" });
+    const { id } = req.params;
+
+    const [errors, updateRoomDTO] = UpdateRoomDTO.create(req.body);
+
+    if (errors || !updateRoomDTO) {
+      res.status(400).json({ error: errors });
+      return;
+    }
+
+    new UpdateRoom(this.roomRepository)
+      .execute(Number(id), updateRoomDTO)
+      .then((data) => res.json(data))
+      .catch((error) => this.handleErrors(error, res));
   };
 
   deleteRoom: RequestHandler = (req, res) => {
