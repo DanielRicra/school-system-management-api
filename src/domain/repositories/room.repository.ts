@@ -1,5 +1,5 @@
 import type { QueryParams } from "../../types";
-import type { CreateRoomDTO } from "../dtos/room";
+import type { CreateRoomDTO, UpdateRoomDTO } from "../dtos/room";
 import type { ListResponseEntity, RoomEntity } from "../entities";
 
 export abstract class RoomRepository {
@@ -8,4 +8,8 @@ export abstract class RoomRepository {
   ): Promise<ListResponseEntity<RoomEntity>>;
   abstract getRoom(id: RoomEntity["id"]): Promise<RoomEntity>;
   abstract createRoom(createRoomDTO: CreateRoomDTO): Promise<RoomEntity>;
+  abstract updateRoom(
+    id: RoomEntity["id"],
+    updateRoomDTO: UpdateRoomDTO
+  ): Promise<RoomEntity>;
 }
