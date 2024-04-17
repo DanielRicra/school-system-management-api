@@ -1,3 +1,4 @@
+import type { Room } from "../../db";
 import { ListResponseEntity, RoomEntity } from "../../domain/entities";
 import { CustomError } from "../../domain/errors";
 import type { RoomQuery } from "../../domain/types";
@@ -49,6 +50,16 @@ export class RoomMapper {
         previous,
       },
       rooms
+    );
+  }
+
+  static toRoomEntity(room: Room) {
+    return new RoomEntity(
+      room.id,
+      room.roomNumber,
+      room.capacity,
+      room.createdAt,
+      room.updatedAt
     );
   }
 }
