@@ -1,5 +1,5 @@
 import type { RoomDatasource } from "../../domain/datasources";
-import type { CreateRoomDTO } from "../../domain/dtos/room";
+import type { CreateRoomDTO, UpdateRoomDTO } from "../../domain/dtos/room";
 import type { ListResponseEntity, RoomEntity } from "../../domain/entities";
 import type { RoomRepository } from "../../domain/repositories";
 import type { QueryParams } from "../../types";
@@ -17,5 +17,9 @@ export class RoomRepositoryImpl implements RoomRepository {
 
   createRoom(createRoomDTO: CreateRoomDTO): Promise<RoomEntity> {
     return this.roomDatasource.createRoom(createRoomDTO);
+  }
+
+  updateRoom(id: number, updateRoomDTO: UpdateRoomDTO): Promise<RoomEntity> {
+    return this.roomDatasource.updateRoom(id, updateRoomDTO);
   }
 }

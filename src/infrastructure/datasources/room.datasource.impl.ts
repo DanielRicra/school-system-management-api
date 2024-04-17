@@ -6,7 +6,7 @@ import { CustomError } from "../../domain/errors";
 import { RoomMapper } from "../mappers";
 import type { QueryParams } from "../../types";
 import type { RoomQuery } from "../../domain/types";
-import type { CreateRoomDTO } from "../../domain/dtos/room";
+import type { CreateRoomDTO, UpdateRoomDTO } from "../../domain/dtos/room";
 
 export class RoomDatasourceImpl implements RoomDatasource {
   async getRooms(query: QueryParams): Promise<ListResponseEntity<RoomEntity>> {
@@ -107,6 +107,28 @@ export class RoomDatasourceImpl implements RoomDatasource {
       )[0];
 
       return RoomMapper.roomEntityFromObject(response);
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      throw CustomError.internalServerError();
+    }
+  }
+
+  async updateRoom(
+    id: RoomEntity["id"],
+    updateRoomDTO: UpdateRoomDTO
+  ): Promise<RoomEntity> {
+    try {
+      const response = await db
+        .update(rooms)
+        .set({ capacity: updateRoomDTO.capacity })
+        .where(eq(rooms.id, id))
+        .returning();
+
+      if (response.length === 0) {
+        throw CustomError.notFound("Room not found.");
+      }
+
+      return RoomMapper.toRoomEntity(response[0]);
     } catch (error) {
       if (error instanceof CustomError) throw error;
       throw CustomError.internalServerError();
