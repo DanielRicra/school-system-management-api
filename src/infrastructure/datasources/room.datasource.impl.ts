@@ -134,4 +134,22 @@ export class RoomDatasourceImpl implements RoomDatasource {
       throw CustomError.internalServerError();
     }
   }
+
+  async deleteRoom(id: number): Promise<void> {
+    try {
+      const deletedRoom = await db
+        .delete(rooms)
+        .where(eq(rooms.id, id))
+        .returning({ deletedId: rooms.id });
+
+      if (deletedRoom.length === 0) {
+        throw CustomError.notFound(
+          `The room with id: '${id}' could not be found, failed to delete.`
+        );
+      }
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      throw CustomError.internalServerError();
+    }
+  }
 }

@@ -22,4 +22,8 @@ export class RoomRepositoryImpl implements RoomRepository {
   updateRoom(id: number, updateRoomDTO: UpdateRoomDTO): Promise<RoomEntity> {
     return this.roomDatasource.updateRoom(id, updateRoomDTO);
   }
+
+  deleteRoom(id: number): Promise<void> {
+    return this.roomDatasource.deleteRoom(id);
+  }
 }
