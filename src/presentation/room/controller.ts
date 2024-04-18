@@ -6,6 +6,7 @@ import {
   GetRoom,
   CreateRoom,
   UpdateRoom,
+  DeleteRoom,
 } from "../../domain/use-cases";
 import { computePaginationOffsetAndLimit } from "../utils";
 import { CreateRoomDTO, UpdateRoomDTO } from "../../domain/dtos/room";
@@ -70,6 +71,9 @@ export class RoomController extends MainController {
   };
 
   deleteRoom: RequestHandler = (req, res) => {
-    res.status(501).json({ message: "Not implement yet" });
+    new DeleteRoom(this.roomRepository)
+      .execute(Number(req.params.id))
+      .then(() => res.sendStatus(204))
+      .catch((error) => this.handleErrors(error, res));
   };
 }
