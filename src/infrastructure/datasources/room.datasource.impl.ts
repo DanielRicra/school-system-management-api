@@ -1,4 +1,4 @@
-import { type SQL, asc, desc, eq, count } from "drizzle-orm";
+import { type SQL, asc, desc, eq, count, sql } from "drizzle-orm";
 import { db, rooms } from "../../db";
 import type { RoomDatasource } from "../../domain/datasources";
 import type { ListResponseEntity, RoomEntity } from "../../domain/entities";
@@ -11,15 +11,16 @@ import type { CreateRoomDTO, UpdateRoomDTO } from "../../domain/dtos/room";
 export class RoomDatasourceImpl implements RoomDatasource {
   async getRooms(query: QueryParams): Promise<ListResponseEntity<RoomEntity>> {
     const { limit, offset, otherParams } = query;
-    const { capacity, ordering, roomNumber, sortDir } =
+    const { ordering, roomNumber, sortDir, capacityGte, capacityLte } =
       RoomMapper.roomQueryFromQueryParams(otherParams);
 
     try {
       const count = await this.count({
-        capacity,
         ordering,
         roomNumber,
         sortDir,
+        capacityGte,
+        capacityLte,
       });
 
       if (count === 0) {
@@ -31,17 +32,17 @@ export class RoomDatasourceImpl implements RoomDatasource {
 
       let qb = db.select().from(rooms).$dynamic();
 
-      if (capacity) {
-        qb = qb.where(eq(rooms.capacity, capacity));
+      if (roomNumber || capacityGte || capacityLte) {
+        qb = qb.where(
+          this.withFilters({ roomNumber, capacityGte, capacityLte })
+        );
       }
-      if (roomNumber) {
-        qb = qb.where(eq(rooms.roomNumber, roomNumber));
-      }
+
       let order: SQL<unknown>;
       if (ordering) {
         order =
           sortDir === "asc" ? asc(rooms[ordering]) : desc(rooms[ordering]);
-      } else order = asc(rooms.createdAt);
+      } else order = desc(rooms.createdAt);
 
       const roomsFromDB = await qb.limit(limit).offset(offset).orderBy(order);
 
@@ -60,12 +61,12 @@ export class RoomDatasourceImpl implements RoomDatasource {
   }
 
   async count(query: RoomQuery): Promise<number> {
-    const { capacity, roomNumber } = query;
     try {
       let qb = db.select({ count: count() }).from(rooms).$dynamic();
 
-      if (capacity) qb = qb.where(eq(rooms.capacity, capacity));
-      if (roomNumber) qb = qb.where(eq(rooms.roomNumber, roomNumber));
+      if (query.roomNumber || query.capacityGte || query.capacityLte) {
+        qb = qb.where(this.withFilters(query));
+      }
 
       const response = await qb;
       return response[0].count;
@@ -151,5 +152,29 @@ export class RoomDatasourceImpl implements RoomDatasource {
       if (error instanceof CustomError) throw error;
       throw CustomError.internalServerError();
     }
+  }
+
+  withFilters({
+    capacityGte,
+    capacityLte,
+    roomNumber,
+  }: Omit<RoomQuery, "ordering" | "sortDir">): SQL {
+    const filterSQls: SQL[] = [];
+
+    if (roomNumber) {
+      filterSQls.push(sql`${rooms.roomNumber} = ${roomNumber}`);
+    } else {
+      if (capacityGte && capacityLte) {
+        filterSQls.push(
+          sql`${rooms.capacity} >= ${capacityGte} and ${rooms.capacity} <= ${capacityLte}`
+        );
+      } else if (capacityGte) {
+        filterSQls.push(sql`${rooms.capacity} >= ${capacityGte}`);
+      } else if (capacityLte) {
+        filterSQls.push(sql`${rooms.capacity} <= ${capacityLte}`);
+      }
+    }
+
+    return sql.join(filterSQls, sql.raw(" "));
   }
 }
