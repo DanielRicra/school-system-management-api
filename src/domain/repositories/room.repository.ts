@@ -12,4 +12,5 @@ export abstract class RoomRepository {
     id: RoomEntity["id"],
     updateRoomDTO: UpdateRoomDTO
   ): Promise<RoomEntity>;
+  abstract deleteRoom(id: RoomEntity["id"]): Promise<void>;
 }
