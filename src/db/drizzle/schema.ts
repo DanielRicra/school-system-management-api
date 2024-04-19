@@ -79,6 +79,7 @@ export const classrooms = pgTable("classrooms", {
     .$onUpdate(() => new Date())
     .notNull(),
 });
+export type Classroom = typeof classrooms.$inferSelect;
 
 export const teachers = pgTable("teachers", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -89,6 +90,7 @@ export const teachers = pgTable("teachers", {
     .$onUpdate(() => new Date())
     .notNull(),
 });
+export type Teacher = typeof teachers.$inferSelect;
 
 export const students = pgTable("students", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -101,6 +103,7 @@ export const students = pgTable("students", {
     .$onUpdate(() => new Date())
     .notNull(),
 });
+export type Student = typeof students.$inferSelect;
 
 export const administrators = pgTable("administrators", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -111,6 +114,7 @@ export const administrators = pgTable("administrators", {
     .$onUpdate(() => new Date())
     .notNull(),
 });
+export type Administrator = typeof administrators.$inferSelect;
 
 export const courses = pgTable("courses", {
   id: serial("id").primaryKey(),
@@ -124,6 +128,7 @@ export const courses = pgTable("courses", {
     .$onUpdate(() => new Date())
     .notNull(),
 });
+export type Course = typeof courses.$inferSelect;
 
 export const assignments = pgTable("assignments", {
   id: serial("id").primaryKey(),
@@ -136,6 +141,7 @@ export const assignments = pgTable("assignments", {
     .$onUpdate(() => new Date())
     .notNull(),
 });
+export type Assignment = typeof assignments.$inferSelect;
 
 export const grades = pgTable("grades", {
   id: serial("id").primaryKey(),
@@ -148,6 +154,7 @@ export const grades = pgTable("grades", {
     .$onUpdate(() => new Date())
     .notNull(),
 });
+export type Grade = typeof grades.$inferSelect;
 
 export const attendance = pgTable("attendance", {
   id: serial("id").primaryKey(),
@@ -161,3 +168,4 @@ export const attendance = pgTable("attendance", {
     .$onUpdate(() => new Date())
     .notNull(),
 });
+export type Attendance = typeof attendance.$inferSelect;
