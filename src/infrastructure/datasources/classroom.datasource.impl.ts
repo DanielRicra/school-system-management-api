@@ -1,4 +1,4 @@
-import { type SQL, asc, desc, sql, count } from "drizzle-orm";
+import { type SQL, asc, desc, sql, count, eq } from "drizzle-orm";
 import { classrooms, db } from "../../db";
 import type { ClassroomDatasource } from "../../domain/datasources";
 import type {
@@ -12,6 +12,7 @@ import type {
 import type { ClassroomQuery } from "../../domain/types";
 import type { QueryParams } from "../../types";
 import { ClassroomMapper, ListResponseMapper } from "../mappers";
+import { CustomError } from "../../domain/errors";
 
 export class ClassroomDatasourceImpl implements ClassroomDatasource {
   async findAll(
@@ -79,8 +80,18 @@ export class ClassroomDatasourceImpl implements ClassroomDatasource {
     return response[0].count;
   }
 
-  findOne(id: number): Promise<ClassroomEntity> {
-    throw new Error("Method not implemented.");
+  async findOne(id: ClassroomEntity["id"]): Promise<ClassroomEntity> {
+    const classroomResult = await db
+      .select()
+      .from(classrooms)
+      .where(eq(classrooms.id, id > 0 ? id : 0))
+      .limit(1);
+
+    if (classroomResult.length === 0) {
+      throw CustomError.notFound("Classroom not found");
+    }
+
+    return ClassroomMapper.toClassroomEntity(classroomResult[0]);
   }
 
   create(createClassroomDTO: CreateClassroomDTO): Promise<ClassroomEntity> {
