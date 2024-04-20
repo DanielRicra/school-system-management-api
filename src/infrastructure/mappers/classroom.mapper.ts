@@ -12,7 +12,6 @@ export class ClassroomMapper {
     if (!gradeLevel) throw CustomError.badRequest("Missing gradeLevel");
     if (!year) throw CustomError.badRequest("Missing year");
     if (!section) throw CustomError.badRequest("Missing section");
-    if (!roomId) throw CustomError.badRequest("Missing roomId");
     if (!createdAt) throw CustomError.badRequest("Missing createdAt");
     if (!updatedAt) throw CustomError.badRequest("Missing updatedAt");
     return new ClassroomEntity(
@@ -30,7 +29,18 @@ export class ClassroomMapper {
     [key: string]: string;
   }): ClassroomQuery {
     const { ordering, room_id, section, year, grade_level } = query;
-    const sortField = ordering?.startsWith("-") ? ordering.slice(1) : ordering;
+
+    let sortField: string | undefined = ordering?.startsWith("-")
+      ? ordering.slice(1)
+      : ordering;
+    if (sortField === "grade_level") sortField = "gradeLevel";
+    if (sortField === "created_at") sortField = "createdAt";
+    if (sortField === "updated_at") sortField = "updatedAt";
+
+    if (!ClassroomEntity.getProperties().includes(sortField)) {
+      sortField = undefined;
+    }
+
     return {
       ordering: sortField as ClassroomQuery["ordering"],
       sortDir: ordering?.startsWith("-") ? "desc" : "asc",
