@@ -1,4 +1,10 @@
-import express, { type Router, type Express } from "express";
+import express, {
+  type Router,
+  type Express,
+  type NextFunction,
+  type Response,
+  type Request,
+} from "express";
 
 type ServerOption = {
   port?: number;
@@ -26,6 +32,11 @@ export class Server {
     this.app.use((req, res) => {
       res.status(404).json({ message: "Route not found" });
     });
+    this.app.use(
+      (error: unknown, req: Request, res: Response, next: NextFunction) => {
+        res.status(500).json({ message: "Internal server error." });
+      }
+    );
   }
 
   async start() {
