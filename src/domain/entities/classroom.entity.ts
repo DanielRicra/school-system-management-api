@@ -8,4 +8,17 @@ export class ClassroomEntity {
     public createdAt: Date,
     public updatedAt: Date
   ) {}
+
+  static getProperties() {
+    return [
+      "id",
+      "gradeLevel",
+      "year",
+      "section",
+      "roomId",
+      "createdAt",
+      "updatedAt",
+    ];
+  }
+
 }
