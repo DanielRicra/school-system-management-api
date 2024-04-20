@@ -1,7 +1,7 @@
 import type { RequestHandler } from "express";
 import { MainController } from "../main-controller";
 import { computePaginationOffsetAndLimit } from "../utils";
-import { FindAll } from "../../domain/use-cases/classroom";
+import { FindAll, FindOne } from "../../domain/use-cases/classroom";
 import type { ClassroomRepository } from "../../domain/repositories";
 
 export class ClassroomController extends MainController {
@@ -24,7 +24,10 @@ export class ClassroomController extends MainController {
   };
 
   findOne: RequestHandler = (req, res) => {
-    res.status(501).send("GET /classroom/:id not implemented");
+    new FindOne(this.classroomRepository)
+      .execute(+req.params.id)
+      .then((data) => res.json(data))
+      .catch((error) => this.handleErrors(error, res));
   };
 
   create: RequestHandler = (req, res) => {
