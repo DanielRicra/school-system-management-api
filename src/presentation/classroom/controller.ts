@@ -3,6 +3,8 @@ import { MainController } from "../main-controller";
 import { computePaginationOffsetAndLimit } from "../utils";
 import { FindAll, FindOne } from "../../domain/use-cases/classroom";
 import type { ClassroomRepository } from "../../domain/repositories";
+import { CreateClassroomDTO } from "../../domain/dtos/classroom";
+import { Create } from "../../domain/use-cases/classroom/";
 
 export class ClassroomController extends MainController {
   constructor(private readonly classroomRepository: ClassroomRepository) {
@@ -31,7 +33,17 @@ export class ClassroomController extends MainController {
   };
 
   create: RequestHandler = (req, res) => {
-    res.status(501).send("POST /classroom not implemented");
+    const [errors, createClassroomDTO] = CreateClassroomDTO.create(req.body);
+
+    if (errors || !createClassroomDTO) {
+      res.status(400).json({ errors });
+      return;
+    }
+
+    new Create(this.classroomRepository)
+      .execute(createClassroomDTO)
+      .then((data) => res.status(201).json(data))
+      .catch((error) => this.handleErrors(error, res));
   };
 
   update: RequestHandler = (req, res) => {
