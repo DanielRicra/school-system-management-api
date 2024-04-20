@@ -20,7 +20,7 @@ export class CreateRoomDTO {
     const errors: { [key: string]: string } = {};
     for (const issue of result.issues) {
       const key = issue.path?.[0].key as string;
-      errors[key] = issue.message;
+      errors[key] = issue.message.replaceAll('"', "'");
     }
 
     return [errors, undefined];
