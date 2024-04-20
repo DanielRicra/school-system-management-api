@@ -1,5 +1,5 @@
 import { type SQL, asc, desc, sql, count, eq } from "drizzle-orm";
-import { classrooms, db } from "../../db";
+import { classrooms, db, rooms } from "../../db";
 import type { ClassroomDatasource } from "../../domain/datasources";
 import type {
   CreateClassroomDTO,
@@ -94,8 +94,27 @@ export class ClassroomDatasourceImpl implements ClassroomDatasource {
     return ClassroomMapper.toClassroomEntity(classroomResult[0]);
   }
 
-  create(createClassroomDTO: CreateClassroomDTO): Promise<ClassroomEntity> {
-    throw new Error("Method not implemented.");
+  async create(
+    createClassroomDTO: CreateClassroomDTO
+  ): Promise<ClassroomEntity> {
+    if (createClassroomDTO.roomId) {
+      const roomResult = await db
+        .select()
+        .from(rooms)
+        .where(eq(rooms.id, createClassroomDTO.roomId))
+        .limit(1);
+
+      if (!roomResult.length) {
+        throw CustomError.badRequest("Creation failed: Room not found");
+      }
+    }
+
+    const result = await db
+      .insert(classrooms)
+      .values(createClassroomDTO)
+      .returning();
+
+    return ClassroomMapper.toClassroomEntity(result[0]);
   }
 
   update(
