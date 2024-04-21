@@ -1,9 +1,12 @@
 import type { RequestHandler } from "express";
 import { MainController } from "../main-controller";
 import { computePaginationOffsetAndLimit } from "../utils";
-import { FindAll, FindOne } from "../../domain/use-cases/classroom";
+import { FindAll, FindOne, Update } from "../../domain/use-cases/classroom";
 import type { ClassroomRepository } from "../../domain/repositories";
-import { CreateClassroomDTO } from "../../domain/dtos/classroom";
+import {
+  CreateClassroomDTO,
+  UpdateClassroomDTO,
+} from "../../domain/dtos/classroom";
 import { Create } from "../../domain/use-cases/classroom/";
 
 export class ClassroomController extends MainController {
@@ -47,7 +50,17 @@ export class ClassroomController extends MainController {
   };
 
   update: RequestHandler = (req, res) => {
-    res.status(501).send("PUT /classroom/:id not implemented");
+    const [errors, updateClassroomDto] = UpdateClassroomDTO.create(req.body);
+
+    if (errors || !updateClassroomDto) {
+      res.status(400).json(errors);
+      return;
+    }
+
+    new Update(this.classroomRepository)
+      .execute(+req.params.id, updateClassroomDto)
+      .then((data) => res.json(data))
+      .catch((err) => this.handleErrors(err, res));
   };
 
   remove: RequestHandler = (req, res) => {
