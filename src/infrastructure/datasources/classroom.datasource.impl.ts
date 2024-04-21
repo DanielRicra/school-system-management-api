@@ -146,8 +146,17 @@ export class ClassroomDatasourceImpl implements ClassroomDatasource {
     return ClassroomMapper.toClassroomEntity(result[0]);
   }
 
-  remove(id: number): Promise<void> {
-    throw new Error("Method not implemented.");
+  async remove(id: ClassroomEntity["id"]): Promise<void> {
+    const deletedClassroom = await db
+      .delete(classrooms)
+      .where(eq(classrooms.id, id))
+      .returning({ deletedId: classrooms.id });
+
+    if (!deletedClassroom.length) {
+      throw CustomError.notFound(
+        `The classroom with id: '${id}' could not be found, failed to delete`
+      );
+    }
   }
 
   private withFilters({
