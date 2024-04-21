@@ -1,7 +1,12 @@
 import type { RequestHandler } from "express";
 import { MainController } from "../main-controller";
 import { computePaginationOffsetAndLimit } from "../utils";
-import { FindAll, FindOne, Update } from "../../domain/use-cases/classroom";
+import {
+  FindAll,
+  FindOne,
+  Remove,
+  Update,
+} from "../../domain/use-cases/classroom";
 import type { ClassroomRepository } from "../../domain/repositories";
 import {
   CreateClassroomDTO,
@@ -64,6 +69,9 @@ export class ClassroomController extends MainController {
   };
 
   remove: RequestHandler = (req, res) => {
-    res.status(501).send("DELETE /classroom/:id not implemented");
+    new Remove(this.classroomRepository)
+      .execute(Number(req.params.id))
+      .then(() => res.sendStatus(204))
+      .catch((err) => this.handleErrors(err, res));
   };
 }
