@@ -117,11 +117,33 @@ export class ClassroomDatasourceImpl implements ClassroomDatasource {
     return ClassroomMapper.toClassroomEntity(result[0]);
   }
 
-  update(
+  async update(
     id: number,
     updateClassroomDTO: UpdateClassroomDTO
   ): Promise<ClassroomEntity> {
-    throw new Error("Method not implemented.");
+    if (updateClassroomDTO.roomId) {
+      const roomResult = await db
+        .select()
+        .from(rooms)
+        .where(eq(rooms.id, updateClassroomDTO.roomId))
+        .limit(1);
+
+      if (!roomResult.length) {
+        throw CustomError.badRequest("Update failed: Room not found.");
+      }
+    }
+
+    const result = await db
+      .update(classrooms)
+      .set(updateClassroomDTO)
+      .where(eq(classrooms.id, id))
+      .returning();
+
+    if (!result.length) {
+      throw CustomError.notFound("Classroom not found.");
+    }
+
+    return ClassroomMapper.toClassroomEntity(result[0]);
   }
 
   remove(id: number): Promise<void> {
