@@ -3,6 +3,7 @@ import { classrooms, db, rooms } from "../../db";
 import type { ClassroomDatasource } from "../../domain/datasources";
 import type {
   CreateClassroomDTO,
+  PatchClassroomDTO,
   UpdateClassroomDTO,
 } from "../../domain/dtos/classroom";
 import type {
@@ -157,6 +158,33 @@ export class ClassroomDatasourceImpl implements ClassroomDatasource {
         `The classroom with id: '${id}' could not be found, failed to delete`
       );
     }
+  }
+
+  async patch(
+    id: ClassroomEntity["id"],
+    patchClassroomDTO: PatchClassroomDTO
+  ): Promise<ClassroomEntity> {
+    if (patchClassroomDTO.roomId) {
+      const roomResult = await db
+        .select()
+        .from(rooms)
+        .where(eq(rooms.id, patchClassroomDTO.roomId));
+      if (!roomResult.length) {
+        throw CustomError.badRequest("Patch failed: Room not found.");
+      }
+    }
+
+    const result = await db
+      .update(classrooms)
+      .set(patchClassroomDTO)
+      .where(eq(classrooms.id, id))
+      .returning();
+
+    if (!result.length) {
+      throw CustomError.notFound("Classroom not found.");
+    }
+
+    return ClassroomMapper.toClassroomEntity(result[0]);
   }
 
   private withFilters({
