@@ -7,7 +7,7 @@ import {
   CreateRoom,
   UpdateRoom,
   DeleteRoom,
-} from "../../domain/use-cases";
+} from "../../domain/use-cases/room";
 import { computePaginationOffsetAndLimit } from "../utils";
 import { CreateRoomDTO, UpdateRoomDTO } from "../../domain/dtos/room";
 
