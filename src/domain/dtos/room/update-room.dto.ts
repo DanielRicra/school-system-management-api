@@ -1,5 +1,6 @@
 import { safeParse } from "valibot";
 import { updateRoomSchema } from "../../../db/validation-schemas";
+import { mapErrorsMessages } from "../utils";
 
 export class UpdateRoomDTO {
   private constructor(public capacity?: number | null) {}
@@ -14,12 +15,8 @@ export class UpdateRoomDTO {
       return [undefined, new UpdateRoomDTO(capacity)];
     }
 
-    const errors: { [key: string]: string } = {};
-    for (const issue of result.issues) {
-      const key = issue.path?.[0].key as string;
-      errors[key] = issue.message.replaceAll('"', "'");;
-    }
+    const errorsObj = mapErrorsMessages(result.issues);
 
-    return [errors, undefined];
+    return [errorsObj];
   }
 }

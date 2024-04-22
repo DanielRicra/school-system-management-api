@@ -1,5 +1,6 @@
 import { safeParse } from "valibot";
 import { insertRoomSchema } from "../../../db/validation-schemas";
+import { mapErrorsMessages } from "../utils";
 
 export class CreateRoomDTO {
   private constructor(
@@ -17,12 +18,8 @@ export class CreateRoomDTO {
       return [undefined, new CreateRoomDTO(roomNumber, capacity)];
     }
 
-    const errors: { [key: string]: string } = {};
-    for (const issue of result.issues) {
-      const key = issue.path?.[0].key as string;
-      errors[key] = issue.message.replaceAll('"', "'");
-    }
+    const errorsObj = mapErrorsMessages(result.issues);
 
-    return [errors, undefined];
+    return [errorsObj];
   }
 }
