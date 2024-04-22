@@ -1,6 +1,7 @@
 import type { ClassroomDatasource } from "../../domain/datasources";
 import type {
   CreateClassroomDTO,
+  PatchClassroomDTO,
   UpdateClassroomDTO,
 } from "../../domain/dtos/classroom";
 import type {
@@ -34,5 +35,12 @@ export class ClassroomRepositoryImpl implements ClassroomRepository {
 
   remove(id: number): Promise<void> {
     return this.classroomDatasource.remove(id);
+  }
+
+  patch(
+    id: ClassroomEntity["id"],
+    patchClassroomDTO: PatchClassroomDTO
+  ): Promise<ClassroomEntity> {
+    return this.classroomDatasource.patch(id, patchClassroomDTO);
   }
 }
