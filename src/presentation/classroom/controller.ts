@@ -4,12 +4,14 @@ import { computePaginationOffsetAndLimit } from "../utils";
 import {
   FindAll,
   FindOne,
+  Patch,
   Remove,
   Update,
 } from "../../domain/use-cases/classroom";
 import type { ClassroomRepository } from "../../domain/repositories";
 import {
   CreateClassroomDTO,
+  PatchClassroomDTO,
   UpdateClassroomDTO,
 } from "../../domain/dtos/classroom";
 import { Create } from "../../domain/use-cases/classroom/";
@@ -72,6 +74,20 @@ export class ClassroomController extends MainController {
     new Remove(this.classroomRepository)
       .execute(Number(req.params.id))
       .then(() => res.sendStatus(204))
+      .catch((err) => this.handleErrors(err, res));
+  };
+
+  patch: RequestHandler = (req, res) => {
+    const [errors, patchClassroomDTO] = PatchClassroomDTO.create(req.body);
+
+    if (errors || !patchClassroomDTO) {
+      res.status(400).json(errors);
+      return;
+    }
+
+    new Patch(this.classroomRepository)
+      .execute(Number(req.params.id), patchClassroomDTO)
+      .then((data) => res.json(data))
       .catch((err) => this.handleErrors(err, res));
   };
 }
