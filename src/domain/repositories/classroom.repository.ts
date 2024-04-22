@@ -1,5 +1,5 @@
 import type { QueryParams } from "../../types";
-import type { UpdateClassroomDTO } from "../dtos/classroom";
+import type { PatchClassroomDTO, UpdateClassroomDTO } from "../dtos/classroom";
 import type { CreateClassroomDTO } from "../dtos/classroom/create-classroom.dto";
 import type { ClassroomEntity, ListResponseEntity } from "../entities";
 
@@ -16,4 +16,8 @@ export abstract class ClassroomRepository {
     updateClassroomDTO: UpdateClassroomDTO
   ): Promise<ClassroomEntity>;
   abstract remove(id: ClassroomEntity["id"]): Promise<void>;
+  abstract patch(
+    id: ClassroomEntity["id"],
+    patchClassroomDTO: PatchClassroomDTO
+  ): Promise<ClassroomEntity>;
 }
