@@ -1,8 +1,5 @@
 import { safeParse } from "valibot";
-import {
-  insertClassroomSchema,
-  updateClassroomSchema,
-} from "../../../db/validation-schemas";
+import { updateClassroomSchema } from "../../../db/validation-schemas";
 import type { DTOCreateResult } from "../../types";
 
 export class UpdateClassroomDTO {
