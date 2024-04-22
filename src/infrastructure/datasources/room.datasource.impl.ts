@@ -3,7 +3,7 @@ import { db, rooms } from "../../db";
 import type { RoomDatasource } from "../../domain/datasources";
 import type { ListResponseEntity, RoomEntity } from "../../domain/entities";
 import { CustomError } from "../../domain/errors";
-import { RoomMapper } from "../mappers";
+import { ListResponseMapper, RoomMapper } from "../mappers";
 import type { QueryParams } from "../../types";
 import type { RoomQuery } from "../../domain/types";
 import type { CreateRoomDTO, UpdateRoomDTO } from "../../domain/dtos/room";
@@ -24,9 +24,10 @@ export class RoomDatasourceImpl implements RoomDatasource {
       });
 
       if (count === 0) {
-        return RoomMapper.listResponseFromEntities(
-          { count: 0, limit, offset },
-          []
+        return ListResponseMapper.listResponseFromEntities(
+          { count, limit, offset },
+          [],
+          "room"
         );
       }
 
@@ -50,9 +51,10 @@ export class RoomDatasourceImpl implements RoomDatasource {
         RoomMapper.roomEntityFromObject(room)
       );
 
-      return RoomMapper.listResponseFromEntities(
-        { count, limit, offset },
-        roomsEntities
+      return ListResponseMapper.listResponseFromEntities<RoomEntity>(
+        { limit, offset, count },
+        roomsEntities,
+        "room"
       );
     } catch (error) {
       if (error instanceof CustomError) throw error;
