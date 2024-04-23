@@ -23,6 +23,13 @@ export const gradeLevel = pgEnum("grade_level", [
   "5th",
 ]);
 
+function getLocaleTimestampString() {
+  const utcDate = new Date();
+  const offsetInMinutes = utcDate.getTimezoneOffset();
+  const offsetInMilliseconds = offsetInMinutes * 60 * 1000;
+  return new Date(utcDate.getTime() - offsetInMilliseconds).toISOString();
+}
+
 export const users = pgTable(
   "users",
   {
@@ -34,9 +41,9 @@ export const users = pgTable(
     role: attendanceStatus("user_roles").notNull(),
     gender: char("gender"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at")
+    updatedAt: timestamp("updated_at", { mode: "string" })
       .defaultNow()
-      .$onUpdate(() => new Date())
+      .$onUpdate(() => getLocaleTimestampString())
       .notNull(),
   },
   (users) => {
@@ -53,9 +60,9 @@ export const rooms = pgTable(
     roomNumber: char("room_number", { length: 3 }).unique().notNull(),
     capacity: smallint("capacity"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at")
+    updatedAt: timestamp("updated_at", { mode: "string" })
       .defaultNow()
-      .$onUpdate(() => new Date())
+      .$onUpdate(() => getLocaleTimestampString())
       .notNull(),
   },
   (rooms) => {
@@ -74,9 +81,9 @@ export const classrooms = pgTable("classrooms", {
   gradeLevel: gradeLevel("grade_level").notNull(),
   roomId: integer("room_id").references(() => rooms.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
+  updatedAt: timestamp("updated_at", { mode: "string" })
     .defaultNow()
-    .$onUpdate(() => new Date())
+    .$onUpdate(() => getLocaleTimestampString())
     .notNull(),
 });
 export type Classroom = typeof classrooms.$inferSelect;
@@ -85,9 +92,9 @@ export const teachers = pgTable("teachers", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
+  updatedAt: timestamp("updated_at", { mode: "string" })
     .defaultNow()
-    .$onUpdate(() => new Date())
+    .$onUpdate(() => getLocaleTimestampString())
     .notNull(),
 });
 export type Teacher = typeof teachers.$inferSelect;
@@ -98,9 +105,9 @@ export const students = pgTable("students", {
   classroomId: integer("classroom_id").references(() => classrooms.id),
   userId: uuid("user_id").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
+  updatedAt: timestamp("updated_at", { mode: "string" })
     .defaultNow()
-    .$onUpdate(() => new Date())
+    .$onUpdate(() => getLocaleTimestampString())
     .notNull(),
 });
 export type Student = typeof students.$inferSelect;
@@ -109,9 +116,9 @@ export const administrators = pgTable("administrators", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
+  updatedAt: timestamp("updated_at", { mode: "string" })
     .defaultNow()
-    .$onUpdate(() => new Date())
+    .$onUpdate(() => getLocaleTimestampString())
     .notNull(),
 });
 export type Administrator = typeof administrators.$inferSelect;
@@ -123,9 +130,9 @@ export const courses = pgTable("courses", {
   classroomId: integer("classroom_id").references(() => classrooms.id),
   teacherId: uuid("teacher_id").references(() => teachers.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
+  updatedAt: timestamp("updated_at", { mode: "string" })
     .defaultNow()
-    .$onUpdate(() => new Date())
+    .$onUpdate(() => getLocaleTimestampString())
     .notNull(),
 });
 export type Course = typeof courses.$inferSelect;
@@ -136,9 +143,9 @@ export const assignments = pgTable("assignments", {
   dueDate: timestamp("due_date"),
   courseId: integer("course_id").references(() => courses.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
+  updatedAt: timestamp("updated_at", { mode: "string" })
     .defaultNow()
-    .$onUpdate(() => new Date())
+    .$onUpdate(() => getLocaleTimestampString())
     .notNull(),
 });
 export type Assignment = typeof assignments.$inferSelect;
@@ -149,9 +156,9 @@ export const grades = pgTable("grades", {
   studentId: uuid("student_id").references(() => students.id),
   assignmentId: integer("assignment_id").references(() => assignments.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
+  updatedAt: timestamp("updated_at", { mode: "string" })
     .defaultNow()
-    .$onUpdate(() => new Date())
+    .$onUpdate(() => getLocaleTimestampString())
     .notNull(),
 });
 export type Grade = typeof grades.$inferSelect;
@@ -163,9 +170,9 @@ export const attendance = pgTable("attendance", {
   courseId: integer("course_id").references(() => courses.id),
   studentId: uuid("student_id").references(() => students.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
+  updatedAt: timestamp("updated_at", { mode: "string" })
     .defaultNow()
-    .$onUpdate(() => new Date())
+    .$onUpdate(() => getLocaleTimestampString())
     .notNull(),
 });
 export type Attendance = typeof attendance.$inferSelect;
