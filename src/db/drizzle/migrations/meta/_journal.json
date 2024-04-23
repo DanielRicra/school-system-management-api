@@ -1,1 +1,20 @@
-{"version":"5","dialect":"pg","entries":[{"idx":0,"version":"5","when":1713050334401,"tag":"0000_fixed_nuke","breakpoints":true}]}
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1713050334401,
+      "tag": "0000_fixed_nuke",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1713901224653,
+      "tag": "0001_serious_ultimo",
+      "breakpoints": true
+    }
+  ]
+}
