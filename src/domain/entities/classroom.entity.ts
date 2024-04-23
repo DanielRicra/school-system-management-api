@@ -6,7 +6,7 @@ export class ClassroomEntity {
     public section: string,
     public roomId: number | null,
     public createdAt: Date,
-    public updatedAt: Date
+    public updatedAt: string
   ) {}
 
   static getProperties() {
@@ -20,5 +20,4 @@ export class ClassroomEntity {
       "updatedAt",
     ];
   }
-
 }

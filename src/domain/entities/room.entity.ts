@@ -4,6 +4,6 @@ export class RoomEntity {
     public roomNumber: string,
     public capacity: number | null,
     public createdAt: Date,
-    public updatedAt: Date
+    public updatedAt: string
   ) {}
 }

@@ -11,7 +11,7 @@ export class CreateClassroomDTO {
     public roomId?: number | null,
     public id?: number,
     public createdAt?: Date,
-    public updatedAt?: Date
+    public updatedAt?: string
   ) {}
 
   static create(object: {

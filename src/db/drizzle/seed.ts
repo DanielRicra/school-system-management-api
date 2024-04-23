@@ -17,7 +17,7 @@ async function seed() {
       roomsMockData.map((room) => ({
         ...room,
         createdAt: new Date(room.createdAt),
-        updatedAt: new Date(room.updatedAt),
+        updatedAt: room.updatedAt,
       }))
     );
     console.log("Seeded rooms successfully ✔️");
