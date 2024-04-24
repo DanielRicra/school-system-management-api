@@ -1,4 +1,4 @@
-import type { Classroom, Room } from "../db";
+import type { Classroom, Room, User } from "../db";
 
 type SortDir = "asc" | "desc";
 
@@ -16,3 +16,8 @@ export type ClassroomQuery = {
 } & Partial<Omit<Classroom, "id" | "createdAt" | "updatedAt">>;
 
 export type DTOCreateResult<T> = [(string | { [key: string]: string })?, T?];
+
+export type UserQuery = {
+  ordering?: keyof User;
+  sortDir: SortDir;
+} & Partial<Omit<User, "id", "passwordHash" | "createdAt" | "updatedAt">>;
