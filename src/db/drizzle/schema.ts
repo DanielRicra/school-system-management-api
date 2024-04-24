@@ -52,6 +52,7 @@ export const users = pgTable(
     };
   }
 );
+export type User = typeof users.$inferSelect;
 
 export const rooms = pgTable(
   "rooms",
