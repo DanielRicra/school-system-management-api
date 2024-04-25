@@ -8,5 +8,18 @@ export class UserEntity {
     public gender: string | null,
     public createdAt: Date,
     public updatedAt: string
-  ) {}
+  ) { }
+
+  static getProperties() {
+    return [
+      "id",
+      "code",
+      "firstName",
+      "surname",
+      "role",
+      "gender",
+      "createdAt",
+      "updatedAt",
+    ];
+  }
 }
