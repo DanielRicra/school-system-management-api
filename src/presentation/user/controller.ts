@@ -3,6 +3,7 @@ import { MainController } from "../main-controller";
 import type { UserRepository } from "../../domain/repositories";
 import { FindAll, FindOne } from "../../domain/use-cases/user";
 import { computePaginationOffsetAndLimit } from "../utils";
+import { UserParamsDTO } from "../../domain/dtos/user";
 
 export class UserController extends MainController {
   constructor(private readonly userRepository: UserRepository) {
@@ -20,16 +21,19 @@ export class UserController extends MainController {
         otherParams: query as { [key: string]: string },
       })
       .then((data) => res.json(data))
-      .catch((err) => {
-        console.log(err);
-
-        this.handleErrors(err, res);
-      });
+      .catch((err) => this.handleErrors(err, res));
   };
 
   findOne: RequestHandler = (req, res) => {
+    const [errors, userParamsDTO] = UserParamsDTO.create(req.params.id);
+
+    if (!userParamsDTO || errors) {
+      res.status(400).json(errors);
+      return;
+    }
+
     new FindOne(this.userRepository)
-      .execute(req.params.id)
+      .execute(userParamsDTO.id)
       .then((data) => res.json(data))
       .catch((err) => this.handleErrors(err, res));
   };
