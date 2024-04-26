@@ -15,6 +15,8 @@ import type { QueryParams } from "../../types";
 import { ClassroomMapper, ListResponseMapper } from "../mappers";
 import { CustomError } from "../../domain/errors";
 
+type ClassroomQueryFilters = Omit<ClassroomQuery, "ordering" | "sortDir">;
+
 export class ClassroomDatasourceImpl implements ClassroomDatasource {
   async findAll(
     query: QueryParams
@@ -24,8 +26,6 @@ export class ClassroomDatasourceImpl implements ClassroomDatasource {
       ClassroomMapper.classroomQueryFromQueryParams(otherParams);
 
     const count = await this.count({
-      sortDir,
-      ordering,
       gradeLevel,
       roomId,
       section,
@@ -70,7 +70,7 @@ export class ClassroomDatasourceImpl implements ClassroomDatasource {
     );
   }
 
-  async count(query: ClassroomQuery): Promise<number> {
+  async count(query: ClassroomQueryFilters): Promise<number> {
     let qb = db.select({ count: count() }).from(classrooms).$dynamic();
 
     if (query.roomId || query.gradeLevel || query.section || query.year) {
@@ -192,7 +192,7 @@ export class ClassroomDatasourceImpl implements ClassroomDatasource {
     roomId,
     section,
     year,
-  }: Omit<ClassroomQuery, "ordering" | "sortDir">): SQL {
+  }: ClassroomQueryFilters): SQL {
     const filterSQls: SQL[] = [];
 
     if (roomId) {
