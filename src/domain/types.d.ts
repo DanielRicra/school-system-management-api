@@ -20,4 +20,7 @@ export type DTOCreateResult<T> = [(string | { [key: string]: string })?, T?];
 export type UserQuery = {
   ordering?: keyof User;
   sortDir: SortDir;
-} & Partial<Omit<User, "id", "passwordHash" | "createdAt" | "updatedAt">>;
+  role?: User["role"];
+  gender?: string;
+  deletedAt?: Date | null;
+};
