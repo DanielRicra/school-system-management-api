@@ -6,9 +6,10 @@ export class UserEntity {
     public surname: string,
     public role: "admin" | "student" | "teacher",
     public gender: string | null,
+    public deletedAt: Date | null,
     public createdAt: Date,
     public updatedAt: string
-  ) { }
+  ) {}
 
   static getProperties() {
     return [
