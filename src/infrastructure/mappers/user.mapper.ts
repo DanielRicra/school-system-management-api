@@ -4,8 +4,17 @@ import type { UserQuery } from "../../domain/types";
 
 export class UserMapper {
   static toUserEntity(user: User) {
-    const { id, code, firstName, surname, role, gender, createdAt, updatedAt } =
-      user;
+    const {
+      id,
+      code,
+      firstName,
+      surname,
+      role,
+      gender,
+      createdAt,
+      updatedAt,
+      deletedAt,
+    } = user;
 
     return new UserEntity(
       id,
@@ -14,30 +23,37 @@ export class UserMapper {
       surname,
       role,
       gender,
+      deletedAt,
       createdAt,
       updatedAt
     );
   }
 
-  static userQueryFromQueryParams(query: { [key: string]: string; }): UserQuery {
+  static userQueryFromQueryParams(query: {
+    [key: string]: string | undefined;
+  }): UserQuery {
     const { ordering, role, gender } = query;
 
     let sortField: string | undefined = ordering?.startsWith("-")
       ? ordering.slice(1)
       : ordering;
 
-    if (sortField === "created_at") sortField = "createdAt";
-    if (sortField === "updated_at") sortField = "updatedAt";
+    if (sortField?.includes("_")) {
+      const [firstWord, secondWord] = sortField.split("_");
+      sortField = `${firstWord}${secondWord[0].toUpperCase()}${secondWord.slice(
+        1
+      )}`;
+    }
 
-    if (!UserEntity.getProperties().includes(sortField)) {
+    if (sortField && !UserEntity.getProperties().includes(sortField)) {
       sortField = undefined;
     }
 
     return {
       ordering: sortField as UserQuery["ordering"],
       sortDir: ordering?.startsWith("-") ? "desc" : "asc",
-      role: role,
-      gender
+      role: role as User["role"],
+      gender,
     };
   }
 }
