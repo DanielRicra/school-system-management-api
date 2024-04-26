@@ -22,6 +22,12 @@ export const gradeLevel = pgEnum("grade_level", [
   "4th",
   "5th",
 ]);
+export const enrollmentStatus = pgEnum("enrollment_status", [
+  "active",
+  "graduated",
+  "transferred",
+  "inactive",
+]);
 
 function getLocaleTimestampString() {
   const utcDate = new Date();
@@ -40,6 +46,7 @@ export const users = pgTable(
     passwordHash: varchar("password_hash", { length: 60 }).notNull(),
     role: userRoles("user_role").notNull(),
     gender: char("gender"),
+    deletedAt: timestamp("deleted_at", { precision: 2 }),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { mode: "string" })
       .defaultNow()
@@ -91,7 +98,11 @@ export type Classroom = typeof classrooms.$inferSelect;
 
 export const teachers = pgTable("teachers", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").references(() => users.id),
+  userId: uuid("user_id")
+    .references(() => users.id)
+    .unique()
+    .notNull(),
+  department: varchar("department", { length: 100 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "string" })
     .defaultNow()
@@ -104,7 +115,11 @@ export const students = pgTable("students", {
   id: uuid("id").primaryKey().defaultRandom(),
   gradeLevel: gradeLevel("grade_level").notNull(),
   classroomId: integer("classroom_id").references(() => classrooms.id),
-  userId: uuid("user_id").references(() => users.id),
+  userId: uuid("user_id")
+    .references(() => users.id)
+    .unique()
+    .notNull(),
+  enrollmentStatus: enrollmentStatus("enrollment_status"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "string" })
     .defaultNow()
@@ -115,7 +130,10 @@ export type Student = typeof students.$inferSelect;
 
 export const administrators = pgTable("administrators", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").references(() => users.id),
+  userId: uuid("user_id")
+    .references(() => users.id)
+    .unique()
+    .notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "string" })
     .defaultNow()
