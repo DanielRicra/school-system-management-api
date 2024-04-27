@@ -15,7 +15,10 @@ export type ClassroomQuery = {
   sortDir: SortDir;
 } & Partial<Omit<Classroom, "id" | "createdAt" | "updatedAt">>;
 
-export type DTOCreateResult<T> = [(string | { [key: string]: string })?, T?];
+export type DTOCreateResult<T> = [
+  (string | { [key: string]: string | string[] })?,
+  T?,
+];
 
 export type UserQuery = {
   ordering?: keyof User;
