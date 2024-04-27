@@ -37,16 +37,17 @@ const basicInsertSchema = omit(
   }),
   ["passwordHash"]
 );
+export const userPasswordSchema = string([
+  minLength(8, "Your password must have at least 8 characters."),
+  maxLength(20, "Your password must be less or equal than 20 characters."),
+  regex(/[a-z]/, "Your password must contain a lowercase letter."),
+  regex(/[A-Z]/, "Your password must contain a uppercase letter."),
+  regex(/[0-9]/, "Your password must contain a number."),
+]);
 export const insertUserSchema = merge([
   basicInsertSchema,
   object({
-    password: string([
-      minLength(8, "Your password is to short."),
-      maxLength(20, "Your password is too long"),
-      regex(/[a-z]/, "Your password must contain a lowercase letter."),
-      regex(/[A-Z]/, "Your password must contain a uppercase letter."),
-      regex(/[0-9]/, "Your password must contain a number."),
-    ]),
+    password: userPasswordSchema,
   }),
 ]);
 
