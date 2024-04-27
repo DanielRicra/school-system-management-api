@@ -15,6 +15,7 @@ export class UserRoutes {
     router.get("/:id", controller.findOne);
     router.post("/", controller.create);
     router.put("/:id", controller.update);
+    router.patch("/:id", controller.patch);
     router.delete("/:id", controller.remove);
     router.put("/:id/password", controller.updatePassword);
 

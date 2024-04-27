@@ -5,12 +5,14 @@ import {
   Create,
   FindAll,
   FindOne,
+  Patch,
   Remove,
   Update,
   UpdatePassword,
 } from "../../domain/use-cases/user";
 import { computePaginationOffsetAndLimit } from "../utils";
 import {
+  PatchUserDTO,
   UpdatePasswordDTO,
   UpdateUserDTO,
   UserParamsDTO,
@@ -116,6 +118,27 @@ export class UserController extends MainController {
 
     new UpdatePassword(this.userRepository)
       .execute(userParamsDTO.id, updatePasswordDTO)
+      .then((data) => res.json(data))
+      .catch((err) => this.handleErrors(err, res));
+  };
+
+  patch: RequestHandler = (req, res) => {
+    const [paramsError, userParamsDTO] = UserParamsDTO.create(req.params.id);
+
+    if (!userParamsDTO || paramsError) {
+      res.status(400).json(paramsError);
+      return;
+    }
+
+    const [patchDTOErrors, patchUserDTO] = PatchUserDTO.create(req.body);
+
+    if (!patchUserDTO || patchDTOErrors) {
+      res.status(400).json(patchDTOErrors);
+      return;
+    }
+
+    new Patch(this.userRepository)
+      .execute(userParamsDTO.id, patchUserDTO)
       .then((data) => res.json(data))
       .catch((err) => this.handleErrors(err, res));
   };
