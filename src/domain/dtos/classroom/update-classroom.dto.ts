@@ -1,4 +1,4 @@
-import { safeParse } from "valibot";
+import { flatten, safeParse } from "valibot";
 import { updateClassroomSchema } from "../../../db/validation-schemas";
 import type { DTOCreateResult } from "../../types";
 
@@ -23,12 +23,8 @@ export class UpdateClassroomDTO {
       ];
     }
 
-    const errors: { [key: string]: string } = {};
-    for (const issue of result.issues) {
-      const key = issue.path?.[0].key as string;
-      errors[key] = issue.message.replaceAll('"', "'");
-    }
+    const issues = flatten<typeof updateClassroomSchema>(result.issues);
 
-    return [errors];
+    return [issues.nested];
   }
 }
