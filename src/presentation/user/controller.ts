@@ -7,9 +7,14 @@ import {
   FindOne,
   Remove,
   Update,
+  UpdatePassword,
 } from "../../domain/use-cases/user";
 import { computePaginationOffsetAndLimit } from "../utils";
-import { UpdateUserDTO, UserParamsDTO } from "../../domain/dtos/user";
+import {
+  UpdatePasswordDTO,
+  UpdateUserDTO,
+  UserParamsDTO,
+} from "../../domain/dtos/user";
 import { CreateUserDTO } from "../../domain/dtos/user";
 
 export class UserController extends MainController {
@@ -95,6 +100,23 @@ export class UserController extends MainController {
   };
 
   updatePassword: RequestHandler = (req, res) => {
-    res.status(509).send("Method not implemented yet.");
+    const [paramsErrors, userParamsDTO] = UserParamsDTO.create(req.params.id);
+
+    if (paramsErrors || !userParamsDTO) {
+      res.status(400).json(paramsErrors);
+      return;
+    }
+
+    const [errors, updatePasswordDTO] = UpdatePasswordDTO.create(req.body);
+
+    if (errors || !updatePasswordDTO) {
+      res.status(400).json(errors);
+      return;
+    }
+
+    new UpdatePassword(this.userRepository)
+      .execute(userParamsDTO.id, updatePasswordDTO)
+      .then((data) => res.json(data))
+      .catch((err) => this.handleErrors(err, res));
   };
 }
