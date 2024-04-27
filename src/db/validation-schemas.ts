@@ -1,6 +1,7 @@
 import { createInsertSchema, createSelectSchema } from "drizzle-valibot";
 import { classrooms, rooms, users } from "./drizzle/schema";
 import {
+  length,
   maxLength,
   merge,
   minLength,
@@ -30,8 +31,14 @@ export const updateClassroomSchema = omit(insertClassroomSchema, [
 ]);
 export const patchClassroomSchema = partial(updateClassroomSchema);
 
+const basicInsertSchema = omit(
+  createInsertSchema(users, {
+    code: () => string([length(6, "Code must be 6 characters")]),
+  }),
+  ["passwordHash"]
+);
 export const insertUserSchema = merge([
-  omit(createInsertSchema(users), ["passwordHash"]),
+  basicInsertSchema,
   object({
     password: string([
       minLength(8, "Your password is to short."),
@@ -43,5 +50,5 @@ export const insertUserSchema = merge([
   }),
 ]);
 
-export const updateUserSchema = omit(insertUserSchema, ["id", "createdAt"]);
+export const updateUserSchema = omit(basicInsertSchema, ["id", "createdAt"]);
 export const patchUserSchema = partial(updateUserSchema);
