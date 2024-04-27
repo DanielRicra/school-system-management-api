@@ -18,6 +18,7 @@ import type { QueryParams } from "../../types";
 import { ListResponseMapper, UserMapper } from "../mappers";
 import type {
   CreateUserDTO,
+  PatchUserDTO,
   UpdatePasswordDTO,
   UpdateUserDTO,
 } from "../../domain/dtos/user";
@@ -173,6 +174,31 @@ export class UserDatasourceImpl implements UserDatasource {
     }
 
     return userIdResult[0];
+  }
+
+  async patch(id: string, patchUserDTO: PatchUserDTO): Promise<UserEntity> {
+    if (patchUserDTO.code) {
+      const existingUser = await db
+        .select()
+        .from(users)
+        .where(and(eq(users.code, patchUserDTO.code), ne(users.id, id)));
+
+      if (existingUser.length) {
+        throw CustomError.badRequest("Code already taken.");
+      }
+    }
+
+    const result = await db
+      .update(users)
+      .set(patchUserDTO)
+      .where(eq(users.id, id))
+      .returning();
+
+    if (!result.length) {
+      throw CustomError.badRequest("User not found.");
+    }
+
+    return UserMapper.toUserEntity(result[0]);
   }
 
   private withFilters({ gender, role }: UserQueryFilters): SQL | undefined {

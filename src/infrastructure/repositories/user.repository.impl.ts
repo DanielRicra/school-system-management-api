@@ -1,6 +1,7 @@
 import type { UserDatasource } from "../../domain/datasources";
 import type {
   CreateUserDTO,
+  PatchUserDTO,
   UpdatePasswordDTO,
   UpdateUserDTO,
 } from "../../domain/dtos/user";
@@ -39,5 +40,9 @@ export class UserRepositoryImpl implements UserRepository {
     updatePasswordDTO: UpdatePasswordDTO
   ): Promise<{ updatedId: string }> {
     return this.userDatasource.updatePassword(id, updatePasswordDTO);
+  }
+
+  patch(id: string, patchUserDTO: PatchUserDTO): Promise<UserEntity> {
+    return this.userDatasource.patch(id, patchUserDTO);
   }
 }

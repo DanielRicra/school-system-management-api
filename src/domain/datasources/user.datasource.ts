@@ -3,6 +3,7 @@ import type {
   UpdateUserDTO,
   CreateUserDTO,
   UpdatePasswordDTO,
+  PatchUserDTO,
 } from "../dtos/user";
 import type { ListResponseEntity, UserEntity } from "../entities";
 
@@ -19,4 +20,8 @@ export abstract class UserDatasource {
     id: UserEntity["id"],
     updatePasswordDTO: UpdatePasswordDTO
   ): Promise<{ updatedId: UserEntity["id"] }>;
+  abstract patch(
+    id: UserEntity["id"],
+    patchUserDTO: PatchUserDTO
+  ): Promise<UserEntity>;
 }

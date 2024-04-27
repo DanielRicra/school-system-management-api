@@ -1,6 +1,7 @@
 import type { QueryParams } from "../../types";
 import type {
   CreateUserDTO,
+  PatchUserDTO,
   UpdatePasswordDTO,
   UpdateUserDTO,
 } from "../dtos/user";
@@ -19,4 +20,8 @@ export abstract class UserRepository {
     id: UserEntity["id"],
     updatePasswordDTO: UpdatePasswordDTO
   ): Promise<{ updatedId: UserEntity["id"] }>;
+  abstract patch(
+    id: UserEntity["id"],
+    patchUserDTO: PatchUserDTO
+  ): Promise<UserEntity>;
 }
