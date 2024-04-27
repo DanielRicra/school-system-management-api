@@ -51,5 +51,9 @@ export const insertUserSchema = merge([
   }),
 ]);
 
-export const updateUserSchema = omit(basicInsertSchema, ["id", "createdAt"]);
+export const updateUserSchema = omit(basicInsertSchema, [
+  "id",
+  "createdAt",
+  "deletedAt",
+]);
 export const patchUserSchema = partial(updateUserSchema);
