@@ -1,4 +1,5 @@
 import type { UserDatasource } from "../../domain/datasources";
+import type { CreateUserDTO } from "../../domain/dtos/user";
 import type { ListResponseEntity, UserEntity } from "../../domain/entities";
 import type { UserRepository } from "../../domain/repositories";
 import type { QueryParams } from "../../types";
@@ -12,5 +13,9 @@ export class UserRepositoryImpl implements UserRepository {
 
   findOne(id: UserEntity["id"]): Promise<UserEntity> {
     return this.userDatasource.findOne(id);
+  }
+
+  create(createUserDTO: CreateUserDTO): Promise<UserEntity> {
+    return this.userDatasource.create(createUserDTO);
   }
 }

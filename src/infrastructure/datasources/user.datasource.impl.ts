@@ -1,4 +1,4 @@
-import { type SQL, sql, count, desc, asc, or, eq } from "drizzle-orm";
+import { type SQL, sql, count, desc, asc, eq } from "drizzle-orm";
 import { db, users } from "../../db";
 import type { UserDatasource } from "../../domain/datasources";
 import type { ListResponseEntity, UserEntity } from "../../domain/entities";
@@ -6,10 +6,19 @@ import { CustomError } from "../../domain/errors";
 import type { UserQuery } from "../../domain/types";
 import type { QueryParams } from "../../types";
 import { ListResponseMapper, UserMapper } from "../mappers";
+import type { CreateUserDTO } from "../../domain/dtos/user";
+import { BcryptAdapter } from "../../config";
 
 type UserQueryFilters = Omit<UserQuery, "sortDir" | "ordering">;
+type HashFunction = (password: string) => string;
+type CompareFunction = (password: string, hashed: string) => boolean;
 
 export class UserDatasourceImpl implements UserDatasource {
+  constructor(
+    private readonly hashPassword: HashFunction = BcryptAdapter.hash,
+    private readonly comparePassword: CompareFunction = BcryptAdapter.compare
+  ) {}
+
   async findAll(query: QueryParams): Promise<ListResponseEntity<UserEntity>> {
     const { limit, offset, otherParams } = query;
     const { sortDir, gender, ordering, role } =
@@ -63,6 +72,26 @@ export class UserDatasourceImpl implements UserDatasource {
     const result = await db.select().from(users).where(eq(users.id, id));
 
     if (!result.length) throw CustomError.notFound("User not found.");
+
+    return UserMapper.toUserEntity(result[0]);
+  }
+
+  async create(createUserDTO: CreateUserDTO): Promise<UserEntity> {
+    const { code, password } = createUserDTO;
+
+    const existingUser = await db
+      .select()
+      .from(users)
+      .where(eq(users.code, code));
+
+    if (existingUser.length) {
+      throw CustomError.badRequest("Code already taken.");
+    }
+
+    const result = await db
+      .insert(users)
+      .values({ ...createUserDTO, passwordHash: this.hashPassword(password) })
+      .returning();
 
     return UserMapper.toUserEntity(result[0]);
   }
