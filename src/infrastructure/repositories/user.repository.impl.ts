@@ -1,5 +1,5 @@
 import type { UserDatasource } from "../../domain/datasources";
-import type { CreateUserDTO } from "../../domain/dtos/user";
+import type { CreateUserDTO, UpdateUserDTO } from "../../domain/dtos/user";
 import type { ListResponseEntity, UserEntity } from "../../domain/entities";
 import type { UserRepository } from "../../domain/repositories";
 import type { QueryParams } from "../../types";
@@ -17,5 +17,16 @@ export class UserRepositoryImpl implements UserRepository {
 
   create(createUserDTO: CreateUserDTO): Promise<UserEntity> {
     return this.userDatasource.create(createUserDTO);
+  }
+
+  update(
+    id: UserEntity["id"],
+    updateUserDTO: UpdateUserDTO
+  ): Promise<UserEntity> {
+    return this.userDatasource.update(id, updateUserDTO);
+  }
+
+  remove(id: UserEntity["id"]): Promise<void> {
+    return this.userDatasource.remove(id);
   }
 }

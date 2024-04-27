@@ -1,4 +1,14 @@
-import { type SQL, sql, count, desc, asc, eq } from "drizzle-orm";
+import {
+  type SQL,
+  sql,
+  count,
+  desc,
+  asc,
+  eq,
+  and,
+  ne,
+  isNull,
+} from "drizzle-orm";
 import { db, users } from "../../db";
 import type { UserDatasource } from "../../domain/datasources";
 import type { ListResponseEntity, UserEntity } from "../../domain/entities";
@@ -6,7 +16,7 @@ import { CustomError } from "../../domain/errors";
 import type { UserQuery } from "../../domain/types";
 import type { QueryParams } from "../../types";
 import { ListResponseMapper, UserMapper } from "../mappers";
-import type { CreateUserDTO } from "../../domain/dtos/user";
+import type { CreateUserDTO, UpdateUserDTO } from "../../domain/dtos/user";
 import { BcryptAdapter } from "../../config";
 
 type UserQueryFilters = Omit<UserQuery, "sortDir" | "ordering">;
@@ -94,6 +104,44 @@ export class UserDatasourceImpl implements UserDatasource {
       .returning();
 
     return UserMapper.toUserEntity(result[0]);
+  }
+
+  async update(id: string, updateUserDTO: UpdateUserDTO): Promise<UserEntity> {
+    const existingUser = await db
+      .select()
+      .from(users)
+      .where(and(eq(users.code, updateUserDTO.code), ne(users.id, id)));
+
+    if (existingUser.length) {
+      throw CustomError.badRequest("Code already taken.");
+    }
+
+    const result = await db
+      .update(users)
+      .set(updateUserDTO)
+      .where(eq(users.id, id))
+      .returning();
+
+    if (!result.length) {
+      throw CustomError.badRequest("User not found.");
+    }
+
+    return UserMapper.toUserEntity(result[0]);
+  }
+
+  async remove(id: string): Promise<void> {
+    // Logic deleted user
+    const result = await db
+      .update(users)
+      .set({ deletedAt: sql`now()` })
+      .where(and(eq(users.id, id), isNull(users.deletedAt)))
+      .returning({ userId: users.id });
+
+    if (!result.length) {
+      throw CustomError.notFound(
+        `The user with id: '${id}' could not be found, failed to delete`
+      );
+    }
   }
 
   private withFilters({ gender, role }: UserQueryFilters): SQL | undefined {
