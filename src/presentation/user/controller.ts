@@ -1,9 +1,10 @@
 import type { RequestHandler } from "express";
 import { MainController } from "../main-controller";
 import type { UserRepository } from "../../domain/repositories";
-import { FindAll, FindOne } from "../../domain/use-cases/user";
+import { Create, FindAll, FindOne } from "../../domain/use-cases/user";
 import { computePaginationOffsetAndLimit } from "../utils";
 import { UserParamsDTO } from "../../domain/dtos/user";
+import { CreateUserDTO } from "../../domain/dtos/user";
 
 export class UserController extends MainController {
   constructor(private readonly userRepository: UserRepository) {
@@ -39,7 +40,17 @@ export class UserController extends MainController {
   };
 
   create: RequestHandler = (req, res) => {
-    res.status(509).send("Method not implemented yet.");
+    const [errors, createUserDTO] = CreateUserDTO.create(req.body);
+
+    if (!createUserDTO || errors) {
+      res.status(400).json(errors);
+      return;
+    }
+
+    new Create(this.userRepository)
+      .execute(createUserDTO)
+      .then((data) => res.json(data))
+      .catch((err) => this.handleErrors(err, res));
   };
 
   update: RequestHandler = (req, res) => {
