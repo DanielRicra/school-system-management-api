@@ -16,7 +16,11 @@ import { CustomError } from "../../domain/errors";
 import type { UserQuery } from "../../domain/types";
 import type { QueryParams } from "../../types";
 import { ListResponseMapper, UserMapper } from "../mappers";
-import type { CreateUserDTO, UpdateUserDTO } from "../../domain/dtos/user";
+import type {
+  CreateUserDTO,
+  UpdatePasswordDTO,
+  UpdateUserDTO,
+} from "../../domain/dtos/user";
 import { BcryptAdapter } from "../../config";
 
 type UserQueryFilters = Omit<UserQuery, "sortDir" | "ordering">;
@@ -142,6 +146,33 @@ export class UserDatasourceImpl implements UserDatasource {
         `The user with id: '${id}' could not be found, failed to delete`
       );
     }
+  }
+
+  async updatePassword(
+    id: string,
+    updatePasswordDTO: UpdatePasswordDTO
+  ): Promise<{ updatedId: string }> {
+    const { newPassword, password } = updatePasswordDTO;
+
+    const existingUser = await db.select().from(users).where(eq(users.id, id));
+
+    if (!existingUser.length) throw CustomError.notFound("User not found.");
+
+    if (!this.comparePassword(password, existingUser[0].passwordHash)) {
+      throw CustomError.unauthorized("Unauthorized request.");
+    }
+
+    const userIdResult = await db
+      .update(users)
+      .set({ passwordHash: this.hashPassword(newPassword) })
+      .where(eq(users.id, id))
+      .returning({ updatedId: users.id });
+
+    if (!userIdResult.length) {
+      throw CustomError.notFound("Failed to update password, user not found.");
+    }
+
+    return userIdResult[0];
   }
 
   private withFilters({ gender, role }: UserQueryFilters): SQL | undefined {

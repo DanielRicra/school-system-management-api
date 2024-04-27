@@ -1,5 +1,9 @@
 import type { QueryParams } from "../../types";
-import type { UpdateUserDTO, CreateUserDTO } from "../dtos/user";
+import type {
+  UpdateUserDTO,
+  CreateUserDTO,
+  UpdatePasswordDTO,
+} from "../dtos/user";
 import type { ListResponseEntity, UserEntity } from "../entities";
 
 export abstract class UserDatasource {
@@ -11,4 +15,8 @@ export abstract class UserDatasource {
     updateUserDTO: UpdateUserDTO
   ): Promise<UserEntity>;
   abstract remove(id: UserEntity["id"]): Promise<void>;
+  abstract updatePassword(
+    id: UserEntity["id"],
+    updatePasswordDTO: UpdatePasswordDTO
+  ): Promise<{ updatedId: UserEntity["id"] }>;
 }
