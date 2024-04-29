@@ -119,7 +119,9 @@ export const students = pgTable("students", {
     .references(() => users.id)
     .unique()
     .notNull(),
-  enrollmentStatus: enrollmentStatus("enrollment_status"),
+  enrollmentStatus: enrollmentStatus("enrollment_status")
+    .notNull()
+    .default("active"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "string" })
     .defaultNow()
