@@ -1,5 +1,5 @@
 import { createInsertSchema, createSelectSchema } from "drizzle-valibot";
-import { classrooms, rooms, users } from "./drizzle/schema";
+import { classrooms, rooms, students, users } from "./drizzle/schema";
 import {
   length,
   maxLength,
@@ -57,3 +57,8 @@ export const updateUserSchema = omit(basicInsertSchema, [
   "deletedAt",
 ]);
 export const patchUserSchema = partial(updateUserSchema);
+
+export const insertStudentSchema = createInsertSchema(students);
+export const patchStudentSchema = partial(
+  omit(insertStudentSchema, ["id", "createdAt"])
+);
