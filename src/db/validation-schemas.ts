@@ -1,6 +1,7 @@
 import { createInsertSchema, createSelectSchema } from "drizzle-valibot";
 import { classrooms, rooms, students, users } from "./drizzle/schema";
 import {
+  custom,
   length,
   maxLength,
   merge,
@@ -57,7 +58,12 @@ export const updateUserSchema = omit(basicInsertSchema, [
   "createdAt",
   "deletedAt",
 ]);
-export const patchUserSchema = partial(updateUserSchema);
+export const patchUserSchema = partial(updateUserSchema, [
+  custom(
+    (input) => Object.keys(input).length !== 0,
+    "Payload body request must include at least one field."
+  ),
+]);
 
 export const insertStudentSchema = createInsertSchema(students, {
   userId: () => string([uuid()]),
