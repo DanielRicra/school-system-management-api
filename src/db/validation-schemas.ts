@@ -69,5 +69,11 @@ export const insertStudentSchema = createInsertSchema(students, {
   userId: () => string([uuid()]),
 });
 export const patchStudentSchema = partial(
-  omit(insertStudentSchema, ["id", "createdAt"])
+  omit(insertStudentSchema, ["id", "createdAt"]),
+  [
+    custom(
+      (input) => Object.keys(input).length !== 0,
+      "Payload body request must include at least one field."
+    ),
+  ]
 );
