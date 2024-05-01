@@ -1,5 +1,8 @@
 import type { StudentDatasource } from "../../domain/datasources";
-import type { CreateStudentDTO } from "../../domain/dtos/student";
+import type {
+  CreateStudentDTO,
+  PatchStudentDTO,
+} from "../../domain/dtos/student";
 import type { ListResponseEntity, StudentEntity } from "../../domain/entities";
 import type { StudentRepository } from "../../domain/repositories";
 import type { QueryParams } from "../../types";
@@ -17,5 +20,12 @@ export class StudentRepositoryImpl implements StudentRepository {
 
   create(createStudentDTO: CreateStudentDTO): Promise<StudentEntity> {
     return this.studentDatasource.create(createStudentDTO);
+  }
+
+  patch(
+    id: string,
+    patchStudentDTO: PatchStudentDTO
+  ): Promise<{ studentId: string }> {
+    return this.studentDatasource.patch(id, patchStudentDTO);
   }
 }
