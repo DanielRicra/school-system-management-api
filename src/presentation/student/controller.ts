@@ -1,9 +1,10 @@
 import type { RequestHandler } from "express";
 import { MainController } from "../main-controller";
-import { FindAll, FindOne } from "../../domain/use-cases/student";
+import { Create, FindAll, FindOne } from "../../domain/use-cases/student";
 import type { StudentRepository } from "../../domain/repositories";
 import { computePaginationOffsetAndLimit } from "../utils";
 import { isUUIDFormat } from "../../domain/dtos/utils";
+import { CreateStudentDTO } from "../../domain/dtos/student";
 
 export class StudentController extends MainController {
   constructor(private readonly studentRepository: StudentRepository) {
@@ -40,7 +41,17 @@ export class StudentController extends MainController {
   };
 
   create: RequestHandler = (req, res) => {
-    res.status(501).json({ error: "Not implemented yet." });
+    const [errors, createStudentDTO] = CreateStudentDTO.create(req.body);
+
+    if (errors || !createStudentDTO) {
+      res.status(400).json(errors);
+      return;
+    }
+
+    new Create(this.studentRepository)
+      .execute(createStudentDTO)
+      .then((data) => res.status(201).json(data))
+      .catch((err: unknown) => this.handleErrors(err, res));
   };
 
   patch: RequestHandler = (req, res) => {
