@@ -1,4 +1,4 @@
-import { type SQL, sql, count, asc, desc, eq } from "drizzle-orm";
+import { type SQL, sql, count, asc, desc, eq, DrizzleError } from "drizzle-orm";
 import type { StudentDatasource } from "../../domain/datasources";
 import type { ListResponseEntity, StudentEntity } from "../../domain/entities";
 import type { QueryParams } from "../../types";
@@ -6,7 +6,10 @@ import { ListResponseMapper, StudentMapper } from "../mappers";
 import type { StudentQuery } from "../../domain/types";
 import { classrooms, db, students, users } from "../../db";
 import { CustomError } from "../../domain/errors";
-import type { CreateStudentDTO } from "../../domain/dtos/student";
+import type {
+  CreateStudentDTO,
+  PatchStudentDTO,
+} from "../../domain/dtos/student";
 
 type StudentQueryFilters = Omit<StudentQuery, "sortDir" | "ordering">;
 
@@ -104,6 +107,93 @@ export class StudentDatasourceImpl implements StudentDatasource {
     }
 
     return StudentMapper.toStudentEntity(result[0]);
+  }
+
+  async patch(
+    id: string,
+    patchStudentDTO: PatchStudentDTO
+  ): Promise<{ studentId: string }> {
+    const { gradeLevel, classroomId } = patchStudentDTO;
+
+    if (gradeLevel || classroomId) {
+      await this.checkStudentGradeLevel(
+        patchStudentDTO,
+        gradeLevel,
+        classroomId,
+        id
+      );
+    }
+
+    try {
+      const result = await db
+        .update(students)
+        .set(patchStudentDTO)
+        .where(eq(students.id, id))
+        .returning({ studentId: students.id });
+
+      if (!result.length) {
+        throw CustomError.notFound("Failed to updated, user not found.");
+      }
+
+      return result[0];
+      // biome-ignore lint/suspicious/noExplicitAny: there was no other way
+    } catch (error: any) {
+      if (error.code === "23503") {
+        throw CustomError.badRequest(
+          "Failed to patch, user with 'userId' not found."
+        );
+      }
+      if (error.code === "23505") {
+        throw CustomError.badRequest("'userId' already belongs to a student.");
+      }
+      throw error;
+    }
+  }
+
+  private async checkStudentGradeLevel(
+    patchStudentDTO: PatchStudentDTO,
+    gradeLevel: string | undefined,
+    classroomId: number | null | undefined,
+    studentId: string
+  ) {
+    const existingStudent = await db
+      .select({ gradeLevel: students.gradeLevel })
+      .from(students)
+      .where(eq(students.id, studentId));
+
+    if (classroomId) {
+      const existingClassroom = await db
+        .select({ gradeLevel: classrooms.gradeLevel })
+        .from(classrooms)
+        .where(eq(classrooms.id, classroomId));
+
+      if (!existingClassroom.length) {
+        throw CustomError.badRequest("Classroom with classroomId not found.");
+      }
+
+      if (gradeLevel && existingClassroom[0].gradeLevel !== gradeLevel) {
+        throw CustomError.badRequest(
+          "A student should not be assigned to a classroom that does not correspond to their grade level."
+        );
+      }
+
+      if (!gradeLevel) {
+        if (
+          existingStudent[0] &&
+          existingClassroom[0].gradeLevel !== existingStudent[0].gradeLevel
+        ) {
+          throw CustomError.badRequest(
+            "A student should not be assigned to a classroom that does not correspond to their grade level."
+          );
+        }
+      }
+    }
+
+    if (gradeLevel && !classroomId) {
+      if (existingStudent[0] && existingStudent[0].gradeLevel !== gradeLevel) {
+        patchStudentDTO.classroomId = null;
+      }
+    }
   }
 
   private withFilters({
