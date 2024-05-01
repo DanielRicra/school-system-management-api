@@ -26,6 +26,9 @@ export class PatchUserDTO {
       ];
     }
     const issues = flatten<typeof patchUserSchema>(result.issues);
-    return [issues.nested];
+    const errors: Record<string, string[]> = { ...issues.nested };
+
+    if (issues.root) errors.body = issues.root;
+    return [errors];
   }
 }
