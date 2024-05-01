@@ -1,10 +1,15 @@
 import type { RequestHandler } from "express";
 import { MainController } from "../main-controller";
-import { Create, FindAll, FindOne } from "../../domain/use-cases/student";
+import {
+  Create,
+  FindAll,
+  FindOne,
+  Patch,
+} from "../../domain/use-cases/student";
 import type { StudentRepository } from "../../domain/repositories";
 import { computePaginationOffsetAndLimit } from "../utils";
 import { isUUIDFormat } from "../../domain/dtos/utils";
-import { CreateStudentDTO } from "../../domain/dtos/student";
+import { CreateStudentDTO, PatchStudentDTO } from "../../domain/dtos/student";
 
 export class StudentController extends MainController {
   constructor(private readonly studentRepository: StudentRepository) {
@@ -55,7 +60,26 @@ export class StudentController extends MainController {
   };
 
   patch: RequestHandler = (req, res) => {
-    res.status(501).json({ error: "Not implemented yet." });
+    const studentId = isUUIDFormat(req.params.id) ? req.params.id : undefined;
+
+    if (!studentId) {
+      res.status(400).json({
+        message: "The id(UUID) is badly formatted.",
+      });
+      return;
+    }
+
+    const [errors, patchStudentDTO] = PatchStudentDTO.create(req.body);
+
+    if (errors || !patchStudentDTO) {
+      res.status(400).json({ message: errors });
+      return;
+    }
+
+    new Patch(this.studentRepository)
+      .execute(studentId, patchStudentDTO)
+      .then((data) => res.status(200).json(data))
+      .catch((err: unknown) => this.handleErrors(err, res));
   };
 
   remove: RequestHandler = (req, res) => {
