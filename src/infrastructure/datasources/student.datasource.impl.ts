@@ -4,8 +4,9 @@ import type { ListResponseEntity, StudentEntity } from "../../domain/entities";
 import type { QueryParams } from "../../types";
 import { ListResponseMapper, StudentMapper } from "../mappers";
 import type { StudentQuery } from "../../domain/types";
-import { db, students } from "../../db";
+import { classrooms, db, students, users } from "../../db";
 import { CustomError } from "../../domain/errors";
+import type { CreateStudentDTO } from "../../domain/dtos/student";
 
 type StudentQueryFilters = Omit<StudentQuery, "sortDir" | "ordering">;
 
@@ -62,6 +63,45 @@ export class StudentDatasourceImpl implements StudentDatasource {
     const result = await db.select().from(students).where(eq(students.id, id));
 
     if (!result.length) throw CustomError.notFound("User not found.");
+
+    return StudentMapper.toStudentEntity(result[0]);
+  }
+
+  async create(createStudentDTO: CreateStudentDTO): Promise<StudentEntity> {
+    const existingUser = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.id, createStudentDTO.userId));
+
+    if (!existingUser.length) {
+      throw CustomError.badRequest("User with userId not found.");
+    }
+
+    if (createStudentDTO.classroomId) {
+      const existingClassroom = await db
+        .select({ gradeLevel: classrooms.gradeLevel })
+        .from(classrooms)
+        .where(eq(classrooms.id, createStudentDTO.classroomId));
+
+      if (!existingClassroom.length) {
+        throw CustomError.badRequest("Classroom with classroomId not found.");
+      }
+      if (existingClassroom[0].gradeLevel !== createStudentDTO.gradeLevel) {
+        throw CustomError.badRequest(
+          "A student should not be assigned to a classroom that does not correspond to their grade level."
+        );
+      }
+    }
+
+    const result = await db
+      .insert(students)
+      .values(createStudentDTO)
+      .onConflictDoNothing({ target: students.userId })
+      .returning();
+
+    if (!result.length) {
+      throw CustomError.badRequest("'userId' already belongs to a student.");
+    }
 
     return StudentMapper.toStudentEntity(result[0]);
   }
