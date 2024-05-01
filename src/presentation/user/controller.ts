@@ -42,7 +42,7 @@ export class UserController extends MainController {
     const [errors, userParamsDTO] = UserParamsDTO.create(req.params.id);
 
     if (!userParamsDTO || errors) {
-      res.status(400).json(errors);
+      res.status(400).json({ message: errors });
       return;
     }
 
@@ -56,7 +56,7 @@ export class UserController extends MainController {
     const [errors, createUserDTO] = CreateUserDTO.create(req.body);
 
     if (!createUserDTO || errors) {
-      res.status(400).json(errors);
+      res.status(400).json({ message: errors });
       return;
     }
 
@@ -70,14 +70,14 @@ export class UserController extends MainController {
     const [paramsError, userParamsDTO] = UserParamsDTO.create(req.params.id);
 
     if (!userParamsDTO || paramsError) {
-      res.status(400).json(paramsError);
+      res.status(400).json({ message: paramsError });
       return;
     }
 
     const [updateDTOErrors, updateUserDTO] = UpdateUserDTO.create(req.body);
 
     if (!updateUserDTO || updateDTOErrors) {
-      res.status(400).json(updateDTOErrors);
+      res.status(400).json({ message: updateDTOErrors });
       return;
     }
 
@@ -91,7 +91,7 @@ export class UserController extends MainController {
     const [errors, userParamsDTO] = UserParamsDTO.create(req.params.id);
 
     if (!userParamsDTO || errors) {
-      res.status(400).json(errors);
+      res.status(400).json({ message: errors });
       return;
     }
 
@@ -112,7 +112,7 @@ export class UserController extends MainController {
     const [errors, updatePasswordDTO] = UpdatePasswordDTO.create(req.body);
 
     if (errors || !updatePasswordDTO) {
-      res.status(400).json(errors);
+      res.status(400).json({ message: errors });
       return;
     }
 
@@ -126,14 +126,14 @@ export class UserController extends MainController {
     const [paramsError, userParamsDTO] = UserParamsDTO.create(req.params.id);
 
     if (!userParamsDTO || paramsError) {
-      res.status(400).json(paramsError);
+      res.status(400).json({ message: paramsError });
       return;
     }
 
     const [patchDTOErrors, patchUserDTO] = PatchUserDTO.create(req.body);
 
     if (!patchUserDTO || patchDTOErrors) {
-      res.status(400).json(patchDTOErrors);
+      res.status(400).json({ message: patchDTOErrors });
       return;
     }
 
