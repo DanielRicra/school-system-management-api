@@ -12,6 +12,7 @@ import {
   partial,
   regex,
   string,
+  uuid,
 } from "valibot";
 
 export const insertRoomSchema = createInsertSchema(rooms, {
@@ -58,7 +59,9 @@ export const updateUserSchema = omit(basicInsertSchema, [
 ]);
 export const patchUserSchema = partial(updateUserSchema);
 
-export const insertStudentSchema = createInsertSchema(students);
+export const insertStudentSchema = createInsertSchema(students, {
+  userId: () => string([uuid()]),
+});
 export const patchStudentSchema = partial(
   omit(insertStudentSchema, ["id", "createdAt"])
 );
