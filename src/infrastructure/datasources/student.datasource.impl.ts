@@ -62,7 +62,7 @@ export class StudentDatasourceImpl implements StudentDatasource {
   async findOne(id: string): Promise<StudentEntity> {
     const result = await db.select().from(students).where(eq(students.id, id));
 
-    if (!result.length) throw CustomError.notFound("User not found.");
+    if (!result.length) throw CustomError.notFound("Student not found.");
 
     return StudentMapper.toStudentEntity(result[0]);
   }
