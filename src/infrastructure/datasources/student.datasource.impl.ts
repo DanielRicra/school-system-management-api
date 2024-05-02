@@ -150,6 +150,19 @@ export class StudentDatasourceImpl implements StudentDatasource {
     }
   }
 
+  async remove(id: string): Promise<void> {
+    const result = await db
+      .delete(students)
+      .where(eq(students.id, id))
+      .returning({ deletedId: students.id });
+
+    if (!result.length) {
+      throw CustomError.notFound(
+        `The student with id: '${id}' could not be found, failed to delete`
+      );
+    }
+  }
+
   private async checkStudentGradeLevel(
     patchStudentDTO: PatchStudentDTO,
     gradeLevel: string | undefined,

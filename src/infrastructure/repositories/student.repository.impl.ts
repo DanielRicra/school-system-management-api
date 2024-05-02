@@ -28,4 +28,8 @@ export class StudentRepositoryImpl implements StudentRepository {
   ): Promise<{ studentId: string }> {
     return this.studentDatasource.patch(id, patchStudentDTO);
   }
+
+  remove(id: string): Promise<void> {
+    return this.studentDatasource.remove(id);
+  }
 }
