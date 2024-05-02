@@ -5,6 +5,7 @@ import {
   FindAll,
   FindOne,
   Patch,
+  Remove,
 } from "../../domain/use-cases/student";
 import type { StudentRepository } from "../../domain/repositories";
 import { computePaginationOffsetAndLimit } from "../utils";
@@ -83,6 +84,18 @@ export class StudentController extends MainController {
   };
 
   remove: RequestHandler = (req, res) => {
-    res.status(501).json({ error: "Not implemented yet." });
+    const studentId = isUUIDFormat(req.params.id) ? req.params.id : undefined;
+
+    if (!studentId) {
+      res.status(400).json({
+        message: "The id(UUID) is badly formatted.",
+      });
+      return;
+    }
+
+    new Remove(this.studentRepository)
+      .execute(studentId)
+      .then(() => res.sendStatus(204))
+      .catch((err: unknown) => this.handleErrors(err, res));
   };
 }
