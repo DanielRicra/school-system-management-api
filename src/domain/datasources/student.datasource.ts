@@ -12,4 +12,5 @@ export abstract class StudentDatasource {
     id: StudentEntity["id"],
     patchStudentDTO: PatchStudentDTO
   ): Promise<{ studentId: StudentEntity["id"] }>;
+  abstract remove(id: StudentEntity["id"]): Promise<void>;
 }
