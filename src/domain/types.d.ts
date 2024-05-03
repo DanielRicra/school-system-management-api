@@ -1,4 +1,4 @@
-import type { Classroom, Room, Student, Teacher, User } from "../db";
+import type { Classroom, Course, Room, Student, Teacher, User } from "../db";
 
 type SortDir = "asc" | "desc";
 
@@ -37,4 +37,11 @@ export type TeacherQuery = {
   ordering?: keyof Teacher;
   sortDir: SortDir;
   department?: string;
+};
+
+export type CourseQuery = {
+  ordering?: keyof Course;
+  sortDir: SortDir;
+  classroomId?: number | null;
+  teacherId?: string | null;
 };
