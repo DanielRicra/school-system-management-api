@@ -4,3 +4,4 @@ export * from "./classroom.entity";
 export * from "./user.entity";
 export * from "./student.entity";
 export * from "./teacher.entity";
+export * from "./course.entity";
