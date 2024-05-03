@@ -14,3 +14,10 @@ export function computePaginationOffsetAndLimit(
   }
   return { offset: (page - 1) * perPage, limit: perPage };
 }
+
+export function parsePKIntegerValue(value: string) {
+  if (Number.isNaN(+value)) {
+    return -1;
+  }
+  return Number.parseInt(value, 10);
+}
