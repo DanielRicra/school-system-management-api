@@ -50,7 +50,7 @@ export class StudentController extends MainController {
     const [errors, createStudentDTO] = CreateStudentDTO.create(req.body);
 
     if (errors || !createStudentDTO) {
-      res.status(400).json(errors);
+      res.status(400).json({ message: errors });
       return;
     }
 

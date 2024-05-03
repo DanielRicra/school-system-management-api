@@ -132,7 +132,7 @@ export class StudentDatasourceImpl implements StudentDatasource {
         .returning({ studentId: students.id });
 
       if (!result.length) {
-        throw CustomError.notFound("Failed to updated, user not found.");
+        throw CustomError.notFound("Failed to patch, student not found.");
       }
 
       return result[0];
