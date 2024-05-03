@@ -1,4 +1,4 @@
-import { type SQL, sql, count, asc, desc, eq, DrizzleError } from "drizzle-orm";
+import { type SQL, sql, count, asc, desc, eq } from "drizzle-orm";
 import type { StudentDatasource } from "../../domain/datasources";
 import type { ListResponseEntity, StudentEntity } from "../../domain/entities";
 import type { QueryParams } from "../../types";

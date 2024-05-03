@@ -3,8 +3,8 @@ import type { ListResponseEntity, TeacherEntity } from "../../entities";
 import type { TeacherRepository } from "../../repositories";
 
 export class FindAll {
-  constructor(private readonly studentRepository: TeacherRepository) {}
+  constructor(private readonly teacherRepository: TeacherRepository) {}
   execute(query: QueryParams): Promise<ListResponseEntity<TeacherEntity>> {
-    return this.studentRepository.findAll(query);
+    return this.teacherRepository.findAll(query);
   }
 }
