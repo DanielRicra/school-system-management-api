@@ -1,5 +1,12 @@
 import { createInsertSchema, createSelectSchema } from "drizzle-valibot";
-import { classrooms, rooms, students, teachers, users } from "./drizzle/schema";
+import {
+  classrooms,
+  courses,
+  rooms,
+  students,
+  teachers,
+  users,
+} from "./drizzle/schema";
 import {
   custom,
   length,
@@ -91,3 +98,18 @@ export const patchTeacherSchema = partial(updateTeacherSchema, [
     "Payload body request must include at least one field."
   ),
 ]);
+
+export const insertCourseSchema = createInsertSchema(courses, {
+  teacherId: () => string([uuid()]),
+  code: () => string([length(6)]),
+  name: () => string([minLength(1)]),
+});
+export const patchCourseSchema = partial(
+  omit(insertCourseSchema, ["id", "createdAt"]),
+  [
+    custom(
+      (input) => Object.keys(input).length !== 0,
+      "Payload body request must include at least one field."
+    ),
+  ]
+);
