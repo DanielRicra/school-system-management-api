@@ -1,4 +1,4 @@
-import type { Classroom, Room, Student, User } from "../db";
+import type { Classroom, Room, Student, Teacher, User } from "../db";
 
 type SortDir = "asc" | "desc";
 
@@ -32,3 +32,9 @@ export type StudentQuery = {
   ordering?: keyof Student;
   sortDir: SortDir;
 } & Partial<Omit<Student, "id" | "createdAt" | "updatedAt" | "userId">>;
+
+export type TeacherQuery = {
+  ordering?: keyof Teacher;
+  sortDir: SortDir;
+  department?: string;
+};
