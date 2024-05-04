@@ -5,3 +5,4 @@ export * from "./user.mapper";
 export * from "./student.mapper";
 export * from "./teacher.mapper";
 export * from "./course.mapper";
+export * from "./assignment.mapper";
