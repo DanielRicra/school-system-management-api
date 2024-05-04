@@ -5,20 +5,17 @@ import { UserRoutes } from "./user";
 import { StudentRoutes } from "./student";
 import { TeacherRoutes } from "./teacher";
 import { CourseRoutes } from "./course";
+import { AssignmentRoutes } from "./assignments";
 
 export class AppRoutes {
   static get routes(): Router {
     const router = Router();
 
     router.get("/", (_, res) => {
+      // biome-ignore format: Leave alone the next line
       res.send({
         routes: [
-          "/room",
-          "/classroom",
-          "/user",
-          "/student",
-          "/teacher",
-          "/courses",
+          "/room", "/classroom", "/user", "/student", "/teacher", "/courses", "/assignment",
         ],
       });
     });
@@ -28,6 +25,7 @@ export class AppRoutes {
     router.use("/student", StudentRoutes.routes);
     router.use("/teacher", TeacherRoutes.routes);
     router.use("/course", CourseRoutes.routes);
+    router.use("/assignment", AssignmentRoutes.routes);
 
     return router;
   }
