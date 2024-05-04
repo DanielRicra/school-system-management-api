@@ -1,5 +1,6 @@
 import { createInsertSchema, createSelectSchema } from "drizzle-valibot";
 import {
+  assignments,
   classrooms,
   courses,
   rooms,
@@ -9,6 +10,7 @@ import {
 } from "./drizzle/schema";
 import {
   custom,
+  isoTimestamp,
   length,
   maxLength,
   merge,
@@ -17,6 +19,7 @@ import {
   number,
   object,
   omit,
+  optional,
   partial,
   regex,
   string,
@@ -106,6 +109,20 @@ export const insertCourseSchema = createInsertSchema(courses, {
 });
 export const patchCourseSchema = partial(
   omit(insertCourseSchema, ["id", "createdAt"]),
+  [
+    custom(
+      (input) => Object.keys(input).length !== 0,
+      "Payload body request must include at least one field."
+    ),
+  ]
+);
+
+export const insertAssignmentSchema = createInsertSchema(assignments, {
+  name: () => string([minLength(1)]),
+  dueDate: () => optional(string([isoTimestamp()])),
+});
+export const patchAssignmentSchema = partial(
+  omit(insertAssignmentSchema, ["id", "createdAt"]),
   [
     custom(
       (input) => Object.keys(input).length !== 0,
