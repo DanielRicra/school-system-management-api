@@ -3,6 +3,7 @@ import {
   assignments,
   classrooms,
   courses,
+  grades,
   rooms,
   students,
   teachers,
@@ -13,6 +14,7 @@ import {
   isoTimestamp,
   length,
   maxLength,
+  maxValue,
   merge,
   minLength,
   minValue,
@@ -123,6 +125,20 @@ export const insertAssignmentSchema = createInsertSchema(assignments, {
 });
 export const patchAssignmentSchema = partial(
   omit(insertAssignmentSchema, ["id", "createdAt"]),
+  [
+    custom(
+      (input) => Object.keys(input).length !== 0,
+      "Payload body request must include at least one field."
+    ),
+  ]
+);
+
+export const insertGradeSchema = createInsertSchema(grades, {
+  grade: () => number([minValue(0), maxValue(20)]),
+  studentId: () => string([uuid()]),
+});
+export const patchGradeSchema = partial(
+  omit(insertGradeSchema, ["id", "createdAt"]),
   [
     custom(
       (input) => Object.keys(input).length !== 0,
