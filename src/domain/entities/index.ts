@@ -6,3 +6,4 @@ export * from "./student.entity";
 export * from "./teacher.entity";
 export * from "./course.entity";
 export * from "./assignment.entity";
+export * from "./grade.entity";
