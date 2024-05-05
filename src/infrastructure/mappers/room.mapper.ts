@@ -1,5 +1,5 @@
 import type { Room } from "../../db";
-import { ListResponseEntity, RoomEntity } from "../../domain/entities";
+import { RoomEntity } from "../../domain/entities";
 import { CustomError } from "../../domain/errors";
 import type { RoomQuery } from "../../domain/types";
 
