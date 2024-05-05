@@ -6,3 +6,4 @@ export * from "./student.mapper";
 export * from "./teacher.mapper";
 export * from "./course.mapper";
 export * from "./assignment.mapper";
+export * from "./grade.mapper";
