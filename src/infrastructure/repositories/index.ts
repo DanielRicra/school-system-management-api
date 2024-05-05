@@ -5,3 +5,4 @@ export * from "./student.repository.impl";
 export * from "./teacher.repository.impl";
 export * from "./course.repository.impl";
 export * from "./assignment.repository.impl";
+export * from "./grade.repository.impl";
