@@ -6,6 +6,7 @@ import { StudentRoutes } from "./student";
 import { TeacherRoutes } from "./teacher";
 import { CourseRoutes } from "./course";
 import { AssignmentRoutes } from "./assignments";
+import { GradeRoutes } from "./grade";
 
 export class AppRoutes {
   static get routes(): Router {
@@ -16,6 +17,7 @@ export class AppRoutes {
       res.send({
         routes: [
           "/room", "/classroom", "/user", "/student", "/teacher", "/courses", "/assignment",
+          "/grade"
         ],
       });
     });
@@ -26,6 +28,7 @@ export class AppRoutes {
     router.use("/teacher", TeacherRoutes.routes);
     router.use("/course", CourseRoutes.routes);
     router.use("/assignment", AssignmentRoutes.routes);
+    router.use("/grade", GradeRoutes.routes);
 
     return router;
   }
