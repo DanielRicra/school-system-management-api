@@ -8,7 +8,7 @@ import {
   Patch,
   Remove,
 } from "../../domain/use-cases/teacher";
-import { isUUIDFormat } from "../../domain/dtos/utils";
+import { isUUIDFormat } from "../../utils/helpers";
 import type { TeacherRepository } from "../../domain/repositories";
 import { CreateTeacherDTO, PatchTeacherDTO } from "../../domain/dtos/teacher";
 

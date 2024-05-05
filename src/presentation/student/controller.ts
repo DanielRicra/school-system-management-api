@@ -9,7 +9,7 @@ import {
 } from "../../domain/use-cases/student";
 import type { StudentRepository } from "../../domain/repositories";
 import { computePaginationOffsetAndLimit } from "../utils";
-import { isUUIDFormat } from "../../domain/dtos/utils";
+import { isUUIDFormat } from "../../utils/helpers";
 import { CreateStudentDTO, PatchStudentDTO } from "../../domain/dtos/student";
 
 export class StudentController extends MainController {

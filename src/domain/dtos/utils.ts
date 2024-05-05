@@ -1,5 +1,3 @@
-import { is, string, uuid } from "valibot";
-
 type IssuesType = {
   path?: { key: unknown }[];
   message: string;
@@ -15,14 +13,4 @@ export function mapErrorsMessages(
   }
 
   return errorsObj;
-}
-
-export function isUUIDFormat(word: string) {
-  const userIdSchema = string([uuid()]);
-
-  if (is(userIdSchema, word)) {
-    return true;
-  }
-
-  return false;
 }
