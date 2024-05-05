@@ -2,6 +2,7 @@ import type {
   Assignment,
   Classroom,
   Course,
+  Grade,
   Room,
   Student,
   Teacher,
@@ -59,4 +60,13 @@ export type AssignmentQuery = {
   sortDir: SortDir;
   dueDateSection?: "upcoming" | "past_due" | "today" | "no_date";
   courseId?: number | null;
+};
+
+export type GradeQuery = {
+  ordering?: keyof Grade;
+  sortDir: SortDir;
+  gradeLte?: number;
+  gradeGte?: number;
+  studentId?: string | null;
+  assignmentId?: number | null;
 };
