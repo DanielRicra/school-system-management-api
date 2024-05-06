@@ -1,5 +1,6 @@
 import type {
   Assignment,
+  Attendance,
   Classroom,
   Course,
   Grade,
@@ -70,3 +71,10 @@ export type GradeQuery = {
   studentId?: string | null;
   assignmentId?: number | null;
 };
+
+export type AttendanceQuery = {
+  ordering?: keyof Attendance;
+  sortDir: SortDir;
+  dayDate?: string;
+  hourDate?: number;
+} & Partial<Omit<Attendance, "id" | "createdAt" | "updatedAt" | "date">>;
