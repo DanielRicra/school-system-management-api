@@ -174,7 +174,9 @@ export type Assignment = typeof assignments.$inferSelect;
 export const grades = pgTable("grades", {
   id: serial("id").primaryKey(),
   grade: smallint("grade"),
-  studentId: uuid("student_id").references(() => students.id),
+  studentId: uuid("student_id")
+    .references(() => students.id, { onDelete: "cascade" })
+    .notNull(),
   assignmentId: integer("assignment_id").references(() => assignments.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "string" })
@@ -188,8 +190,16 @@ export const attendance = pgTable("attendance", {
   id: serial("id").primaryKey(),
   status: attendanceStatus("status"),
   date: timestamp("date"),
-  courseId: integer("course_id").references(() => courses.id),
-  studentId: uuid("student_id").references(() => students.id),
+  courseId: integer("course_id")
+    .references(() => courses.id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  studentId: uuid("student_id")
+    .references(() => students.id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "string" })
     .defaultNow()
