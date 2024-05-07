@@ -6,4 +6,6 @@ const pool = new Pool({
   connectionString: envs.DB_URL,
 });
 
-export const db = drizzle(pool);
+export const db = drizzle(pool, {
+  logger: process.env.NODE_ENV !== "production",
+});
