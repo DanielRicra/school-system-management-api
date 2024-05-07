@@ -6,3 +6,4 @@ export * from "./teacher.datasource";
 export * from "./course.datasource";
 export * from "./assignment.datasource";
 export * from "./grade.datasource";
+export * from "./attendance.datasource";
