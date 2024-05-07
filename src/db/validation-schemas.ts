@@ -1,6 +1,7 @@
 import { createInsertSchema, createSelectSchema } from "drizzle-valibot";
 import {
   assignments,
+  attendance,
   classrooms,
   courses,
   grades,
@@ -25,6 +26,7 @@ import {
   partial,
   regex,
   string,
+  transform,
   uuid,
 } from "valibot";
 
@@ -139,6 +141,25 @@ export const insertGradeSchema = createInsertSchema(grades, {
 });
 export const patchGradeSchema = partial(
   omit(insertGradeSchema, ["id", "createdAt"]),
+  [
+    custom(
+      (input) => Object.keys(input).length !== 0,
+      "Payload body request must include at least one field."
+    ),
+  ]
+);
+
+export const insertAttendanceSchema = createInsertSchema(attendance, {
+  studentId: string([uuid()]),
+  date: transform(
+    string([
+      isoTimestamp("Invalid date format, must be: 'yyyy-mm-ddThh:mm:ss.sssZ'."),
+    ]),
+    (input) => new Date(input)
+  ),
+});
+export const patchAttendanceSchema = partial(
+  omit(insertAttendanceSchema, ["id", "createdAt"]),
   [
     custom(
       (input) => Object.keys(input).length !== 0,
