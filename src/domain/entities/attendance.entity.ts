@@ -1,10 +1,10 @@
 export class AttendanceEntity {
   constructor(
     public id: number,
-    public status: "absent" | "present" | "late",
+    public status: "absent" | "present" | "late" | null,
     public date: Date | null,
-    public courseId: number | null,
-    public studentId: string | null,
+    public courseId: number,
+    public studentId: string,
     public createdAt: Date,
     public updatedAt: string
   ) {}
