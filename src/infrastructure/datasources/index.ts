@@ -7,3 +7,4 @@ export * from "./course.datasource.impl";
 export * from "./assignment.datasource.impl";
 export * from "./grade.datasource.impl";
 export * from "./attendance.datasource.impl";
+export * from "./auth.datasource.impl";
