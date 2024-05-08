@@ -9,4 +9,5 @@ export const envs = {
   DB_URL: get(isTest ? "VITE_DB_URL" : "DB_URL")
     .required()
     .asString(),
+  JWT_SEED: get("JWT_SEED").required().asString(),
 };
