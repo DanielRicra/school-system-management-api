@@ -7,3 +7,4 @@ export * from "./course.repository";
 export * from "./assignment.repository";
 export * from "./grade.repository";
 export * from "./attendance.repository";
+export * from "./auth.repository";
