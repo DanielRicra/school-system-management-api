@@ -9,6 +9,7 @@ import { AssignmentRoutes } from "./assignments";
 import { GradeRoutes } from "./grade";
 import { AttendanceRoutes } from "./attendance";
 import { AuthRoutes } from "./auth";
+import { AuthMiddleware } from "./middlewares";
 
 export class AppRoutes {
   static get routes(): Router {
@@ -24,8 +25,18 @@ export class AppRoutes {
       });
     });
     router.use("/auth", AuthRoutes.routes);
-    router.use("/room", RoomRoutes.routes);
-    router.use("/classroom", ClassroomRoutes.routes);
+
+    router.use("/", AuthMiddleware.validateJwt);
+    router.use(
+      "/room",
+      AuthMiddleware.checkUserRole("admin"),
+      RoomRoutes.routes
+    );
+    router.use(
+      "/classroom",
+      AuthMiddleware.checkUserRole("admin"),
+      ClassroomRoutes.routes
+    );
     router.use("/user", UserRoutes.routes);
     router.use("/student", StudentRoutes.routes);
     router.use("/teacher", TeacherRoutes.routes);
