@@ -27,17 +27,11 @@ export class AppRoutes {
     router.use("/auth", AuthRoutes.routes);
 
     router.use("/", AuthMiddleware.validateJwt);
-    router.use(
-      "/room",
-      AuthMiddleware.checkUserRole("admin"),
-      RoomRoutes.routes
-    );
-    router.use(
-      "/classroom",
-      AuthMiddleware.checkUserRole("admin"),
-      ClassroomRoutes.routes
-    );
     router.use("/user", UserRoutes.routes);
+    
+    router.use("/", AuthMiddleware.checkUserRole("admin"));
+    router.use("/room", RoomRoutes.routes);
+    router.use("/classroom", ClassroomRoutes.routes);
     router.use("/student", StudentRoutes.routes);
     router.use("/teacher", TeacherRoutes.routes);
     router.use("/course", CourseRoutes.routes);
