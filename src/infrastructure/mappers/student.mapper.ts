@@ -1,9 +1,11 @@
-import type { Student } from "../../db";
+import type { Student, User } from "../../db";
 import { StudentEntity } from "../../domain/entities";
 import type { StudentQuery } from "../../domain/types";
 
 export class StudentMapper {
-  static toStudentEntity(student: Student): StudentEntity {
+  static toStudentEntity(
+    student: { user?: User | null } & Student
+  ): StudentEntity {
     return new StudentEntity(
       student.id,
       student.gradeLevel,
@@ -11,7 +13,8 @@ export class StudentMapper {
       student.userId,
       student.enrollmentStatus,
       student.createdAt,
-      student.updatedAt
+      student.updatedAt,
+      student.user ?? undefined
     );
   }
 
@@ -31,9 +34,11 @@ export class StudentMapper {
       )}`;
     }
 
-    if (sortField && !StudentEntity.getProperties().includes(sortField)) {
+    if (sortField && !StudentEntity.getSortingFields().includes(sortField)) {
       sortField = undefined;
     }
+
+    if (sortField?.startsWith("user.")) sortField = sortField.split(".")[1];
 
     return {
       ordering: sortField as StudentQuery["ordering"],
