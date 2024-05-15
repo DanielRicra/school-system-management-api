@@ -1,3 +1,5 @@
+import type { UserEntity } from "./user.entity";
+
 export class StudentEntity {
   constructor(
     public id: string,
@@ -10,18 +12,20 @@ export class StudentEntity {
       | "transferred"
       | "inactive",
     public createdAt: Date,
-    public updatedAt: string
+    public updatedAt: string,
+    public user?: UserEntity
   ) {}
 
-  static getProperties() {
+  static getSortingFields() {
     return [
-      "id",
       "gradeLevel",
       "classroomId",
       "userId",
       "enrollmentStatus",
       "createdAt",
       "updatedAt",
+      "user.firstName",
+      "user.surname",
     ];
   }
 }
