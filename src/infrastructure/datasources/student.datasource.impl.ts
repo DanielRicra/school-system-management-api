@@ -37,7 +37,20 @@ export class StudentDatasourceImpl implements StudentDatasource {
       );
     }
 
-    let qb = db.select().from(students).$dynamic();
+    let qb = db
+      .select({
+        id: students.id,
+        gradeLevel: students.gradeLevel,
+        classroomId: students.classroomId,
+        userId: students.userId,
+        enrollmentStatus: students.enrollmentStatus,
+        createdAt: students.createdAt,
+        updatedAt: students.updatedAt,
+        user: users,
+      })
+      .from(students)
+      .leftJoin(users, eq(students.userId, users.id))
+      .$dynamic();
 
     if (whereSQL) {
       qb = qb.where(whereSQL);
@@ -45,8 +58,15 @@ export class StudentDatasourceImpl implements StudentDatasource {
 
     let order: SQL;
     if (ordering) {
-      order =
-        sortDir === "asc" ? asc(students[ordering]) : desc(students[ordering]);
+      if (ordering === "firstName" || ordering === "surname") {
+        order =
+          sortDir === "asc" ? asc(users[ordering]) : desc(users[ordering]);
+      } else {
+        order =
+          sortDir === "asc"
+            ? asc(students[ordering])
+            : desc(students[ordering]);
+      }
     } else order = desc(students.createdAt);
 
     const result = await qb.limit(limit).offset(offset).orderBy(order);
@@ -233,7 +253,11 @@ export class StudentDatasourceImpl implements StudentDatasource {
   }
 
   private async countAll(whereSql?: SQL): Promise<number> {
-    let qb = db.select({ count: count() }).from(students).$dynamic();
+    let qb = db
+      .select({ count: count() })
+      .from(students)
+      .leftJoin(users, eq(students.userId, users.id))
+      .$dynamic();
 
     if (whereSql) {
       qb = qb.where(whereSql);
