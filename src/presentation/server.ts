@@ -5,6 +5,7 @@ import express, {
   type Response,
   type Request,
 } from "express";
+import cors from "cors";
 
 type ServerOption = {
   port?: number;
@@ -25,6 +26,7 @@ export class Server {
   }
 
   configure() {
+    this.app.use(cors());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.get("/", (req, res) => res.json({ url: "/api/v1" }));
