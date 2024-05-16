@@ -67,10 +67,20 @@ export const rooms = pgTable(
     id: serial("id").primaryKey(),
     roomNumber: char("room_number", { length: 3 }).unique().notNull(),
     capacity: smallint("capacity"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at", { mode: "string" })
+    createdAt: timestamp("created_at", {
+      mode: "string",
+      precision: 0,
+      withTimezone: true,
+    })
       .defaultNow()
-      .$onUpdate(() => getLocaleTimestampString())
+      .notNull(),
+    updatedAt: timestamp("updated_at", {
+      mode: "string",
+      precision: 0,
+      withTimezone: true,
+    })
+      .defaultNow()
+      .$onUpdate(() => new Date().toLocaleString())
       .notNull(),
   },
   (rooms) => {
