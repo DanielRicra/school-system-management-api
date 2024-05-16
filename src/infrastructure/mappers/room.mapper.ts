@@ -12,7 +12,17 @@ export class RoomMapper {
       "capacity.lte": capacityLteQ,
     } = query;
 
-    const sortField = ordering?.startsWith("-") ? ordering.slice(1) : ordering;
+    let sortField: string | undefined = ordering?.startsWith("-")
+      ? ordering.slice(1)
+      : ordering;
+
+    if (sortField?.includes("_")) {
+      const [firstWord, secondWord] = sortField.split("_");
+      sortField = `${firstWord}${secondWord[0].toUpperCase()}${secondWord.slice(
+        1
+      )}`;
+    }
+
     let capacityGte: number | undefined = +capacityGteQ;
     let capacityLte: number | undefined = +capacityLteQ;
 
@@ -24,6 +34,10 @@ export class RoomMapper {
 
     capacityGte = capacityGte > 0 ? capacityGte : undefined;
     capacityLte = capacityLte > 0 ? capacityLte : undefined;
+
+    if (sortField && !RoomEntity.getSortingFields().includes(sortField)) {
+      sortField = undefined;
+    }
 
     return {
       roomNumber: room_number,
