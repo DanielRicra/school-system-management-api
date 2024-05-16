@@ -4,8 +4,8 @@ import { insertGradeSchema } from "../../../db/validation-schemas";
 
 export class CreateGradeDTO {
   private constructor(
+    public studentId: string,
     public grade?: number | null,
-    public studentId?: string | null,
     public assignmentId?: number | null
   ) {}
 
@@ -18,7 +18,7 @@ export class CreateGradeDTO {
 
     if (result.success) {
       const { assignmentId, grade, studentId } = result.output;
-      return [undefined, new CreateGradeDTO(grade, studentId, assignmentId)];
+      return [undefined, new CreateGradeDTO(studentId, grade, assignmentId)];
     }
 
     const issues = flatten<typeof insertGradeSchema>(result.issues);

@@ -5,7 +5,7 @@ import { patchGradeSchema } from "../../../db/validation-schemas";
 export class PatchGradeDTO {
   private constructor(
     public grade?: number | null,
-    public studentId?: string | null,
+    public studentId?: string,
     public assignmentId?: number | null
   ) {}
 
