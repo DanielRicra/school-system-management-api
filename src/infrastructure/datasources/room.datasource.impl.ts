@@ -48,7 +48,7 @@ export class RoomDatasourceImpl implements RoomDatasource {
       const roomsFromDB = await qb.limit(limit).offset(offset).orderBy(order);
 
       const roomsEntities = roomsFromDB.map((room) =>
-        RoomMapper.roomEntityFromObject(room)
+        RoomMapper.toRoomEntity(room)
       );
 
       return ListResponseMapper.listResponseFromEntities<RoomEntity>(
@@ -87,7 +87,7 @@ export class RoomDatasourceImpl implements RoomDatasource {
       if (response.length === 0) {
         throw CustomError.notFound("Room not found.");
       }
-      return RoomMapper.roomEntityFromObject(response[0]);
+      return RoomMapper.toRoomEntity(response[0]);
     } catch (error) {
       if (error instanceof CustomError) throw error;
       throw CustomError.internalServerError();
@@ -109,7 +109,7 @@ export class RoomDatasourceImpl implements RoomDatasource {
         await db.insert(rooms).values(createRoomDTO).returning()
       )[0];
 
-      return RoomMapper.roomEntityFromObject(response);
+      return RoomMapper.toRoomEntity(response);
     } catch (error) {
       if (error instanceof CustomError) throw error;
       throw CustomError.internalServerError();
