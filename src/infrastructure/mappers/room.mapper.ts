@@ -4,17 +4,6 @@ import { CustomError } from "../../domain/errors";
 import type { RoomQuery } from "../../domain/types";
 
 export class RoomMapper {
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  static roomEntityFromObject(object: { [key: string]: any }) {
-    const { id, roomNumber, capacity, createdAt, updatedAt } = object;
-    if (!id) throw CustomError.badRequest("Missing id");
-    if (!roomNumber) throw CustomError.badRequest("Missing roomNumber");
-    if (!createdAt) throw CustomError.badRequest("Missing createdAt");
-    if (!updatedAt) throw CustomError.badRequest("Missing updatedAt");
-
-    return new RoomEntity(id, roomNumber, capacity, createdAt, updatedAt);
-  }
-
   static roomQueryFromQueryParams(query: { [key: string]: string }): RoomQuery {
     const {
       room_number,
