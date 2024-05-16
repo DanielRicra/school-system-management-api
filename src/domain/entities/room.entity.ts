@@ -3,7 +3,7 @@ export class RoomEntity {
     public id: number,
     public roomNumber: string,
     public capacity: number | null,
-    public createdAt: Date,
+    public createdAt: string,
     public updatedAt: string
   ) {}
 }
