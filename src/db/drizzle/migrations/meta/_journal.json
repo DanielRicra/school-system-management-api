@@ -43,6 +43,13 @@
       "when": 1715833947653,
       "tag": "0005_soft_skreet",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1715897443461,
+      "tag": "0006_lame_harrier",
+      "breakpoints": true
     }
   ]
 }

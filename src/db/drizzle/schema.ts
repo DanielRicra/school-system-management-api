@@ -29,44 +29,8 @@ export const enrollmentStatus = pgEnum("enrollment_status", [
   "inactive",
 ]);
 
-function getLocaleTimestampString() {
-  const utcDate = new Date();
-  const offsetInMinutes = utcDate.getTimezoneOffset();
-  const offsetInMilliseconds = offsetInMinutes * 60 * 1000;
-  return new Date(utcDate.getTime() - offsetInMilliseconds).toISOString();
-}
-
-export const users = pgTable(
-  "users",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    code: varchar("code", { length: 6 }).unique().notNull(),
-    firstName: varchar("first_name", { length: 64 }).notNull(),
-    surname: varchar("surname", { length: 64 }).notNull().notNull(),
-    passwordHash: varchar("password_hash", { length: 60 }).notNull(),
-    role: userRoles("user_role").notNull(),
-    gender: char("gender"),
-    deletedAt: timestamp("deleted_at", { precision: 2 }),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at", { mode: "string" })
-      .defaultNow()
-      .$onUpdate(() => getLocaleTimestampString())
-      .notNull(),
-  },
-  (users) => {
-    return {
-      surnameIndex: index("surname_idx").on(users.surname),
-    };
-  }
-);
-export type User = typeof users.$inferSelect;
-
-export const rooms = pgTable(
-  "rooms",
-  {
-    id: serial("id").primaryKey(),
-    roomNumber: char("room_number", { length: 3 }).unique().notNull(),
-    capacity: smallint("capacity"),
+function getTimestamps() {
+  return {
     createdAt: timestamp("created_at", {
       mode: "string",
       precision: 0,
@@ -82,6 +46,37 @@ export const rooms = pgTable(
       .defaultNow()
       .$onUpdate(() => new Date().toLocaleString())
       .notNull(),
+  };
+}
+
+export const users = pgTable(
+  "users",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    code: varchar("code", { length: 6 }).unique().notNull(),
+    firstName: varchar("first_name", { length: 64 }).notNull(),
+    surname: varchar("surname", { length: 64 }).notNull().notNull(),
+    passwordHash: varchar("password_hash", { length: 60 }).notNull(),
+    role: userRoles("user_role").notNull(),
+    gender: char("gender"),
+    deletedAt: timestamp("deleted_at", { precision: 2 }),
+    ...getTimestamps(),
+  },
+  (users) => {
+    return {
+      surnameIndex: index("surname_idx").on(users.surname),
+    };
+  }
+);
+export type User = typeof users.$inferSelect;
+
+export const rooms = pgTable(
+  "rooms",
+  {
+    id: serial("id").primaryKey(),
+    roomNumber: char("room_number", { length: 3 }).unique().notNull(),
+    capacity: smallint("capacity"),
+    ...getTimestamps(),
   },
   (rooms) => {
     return {
@@ -98,11 +93,7 @@ export const classrooms = pgTable("classrooms", {
   section: char("section", { length: 1 }).notNull(),
   gradeLevel: gradeLevel("grade_level").notNull(),
   roomId: integer("room_id").references(() => rooms.id),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { mode: "string" })
-    .defaultNow()
-    .$onUpdate(() => getLocaleTimestampString())
-    .notNull(),
+  ...getTimestamps(),
 });
 export type Classroom = typeof classrooms.$inferSelect;
 
@@ -113,11 +104,7 @@ export const teachers = pgTable("teachers", {
     .unique()
     .notNull(),
   department: varchar("department", { length: 100 }),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { mode: "string" })
-    .defaultNow()
-    .$onUpdate(() => getLocaleTimestampString())
-    .notNull(),
+  ...getTimestamps(),
 });
 export type Teacher = typeof teachers.$inferSelect;
 
@@ -132,11 +119,7 @@ export const students = pgTable("students", {
   enrollmentStatus: enrollmentStatus("enrollment_status")
     .notNull()
     .default("active"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { mode: "string" })
-    .defaultNow()
-    .$onUpdate(() => getLocaleTimestampString())
-    .notNull(),
+  ...getTimestamps(),
 });
 export type Student = typeof students.$inferSelect;
 
@@ -146,11 +129,7 @@ export const administrators = pgTable("administrators", {
     .references(() => users.id)
     .unique()
     .notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { mode: "string" })
-    .defaultNow()
-    .$onUpdate(() => getLocaleTimestampString())
-    .notNull(),
+  ...getTimestamps(),
 });
 export type Administrator = typeof administrators.$inferSelect;
 
@@ -160,11 +139,7 @@ export const courses = pgTable("courses", {
   name: varchar("name").notNull(),
   classroomId: integer("classroom_id").references(() => classrooms.id),
   teacherId: uuid("teacher_id").references(() => teachers.id),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { mode: "string" })
-    .defaultNow()
-    .$onUpdate(() => getLocaleTimestampString())
-    .notNull(),
+  ...getTimestamps(),
 });
 export type Course = typeof courses.$inferSelect;
 
@@ -173,11 +148,7 @@ export const assignments = pgTable("assignments", {
   name: varchar("name", { length: 255 }).notNull(),
   dueDate: timestamp("due_date"),
   courseId: integer("course_id").references(() => courses.id),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { mode: "string" })
-    .defaultNow()
-    .$onUpdate(() => getLocaleTimestampString())
-    .notNull(),
+  ...getTimestamps(),
 });
 export type Assignment = typeof assignments.$inferSelect;
 
@@ -188,11 +159,7 @@ export const grades = pgTable("grades", {
     .references(() => students.id, { onDelete: "cascade" })
     .notNull(),
   assignmentId: integer("assignment_id").references(() => assignments.id),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { mode: "string" })
-    .defaultNow()
-    .$onUpdate(() => getLocaleTimestampString())
-    .notNull(),
+  ...getTimestamps(),
 });
 export type Grade = typeof grades.$inferSelect;
 
@@ -210,10 +177,6 @@ export const attendance = pgTable("attendance", {
       onDelete: "cascade",
     })
     .notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { mode: "string" })
-    .defaultNow()
-    .$onUpdate(() => getLocaleTimestampString())
-    .notNull(),
+  ...getTimestamps(),
 });
 export type Attendance = typeof attendance.$inferSelect;
