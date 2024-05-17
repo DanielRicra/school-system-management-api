@@ -50,6 +50,13 @@
       "when": 1715897443461,
       "tag": "0006_lame_harrier",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1715908211100,
+      "tag": "0007_odd_bedlam",
+      "breakpoints": true
     }
   ]
 }
