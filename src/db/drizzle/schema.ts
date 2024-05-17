@@ -59,7 +59,11 @@ export const users = pgTable(
     passwordHash: varchar("password_hash", { length: 60 }).notNull(),
     role: userRoles("user_role").notNull(),
     gender: char("gender"),
-    deletedAt: timestamp("deleted_at", { precision: 2 }),
+    deletedAt: timestamp("deleted_at", {
+      precision: 2,
+      mode: "string",
+      withTimezone: true,
+    }),
     ...getTimestamps(),
   },
   (users) => {

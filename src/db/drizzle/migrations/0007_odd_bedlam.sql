@@ -1,0 +1,1 @@
+ALTER TABLE "users" ALTER COLUMN "deleted_at" SET DATA TYPE timestamp(2) with time zone;
