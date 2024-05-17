@@ -10,7 +10,7 @@ export class CreateClassroomDTO {
     public gradeLevel: "1st" | "2nd" | "3rd" | "4th" | "5th",
     public roomId?: number | null,
     public id?: number,
-    public createdAt?: Date,
+    public createdAt?: string,
     public updatedAt?: string
   ) {}
 

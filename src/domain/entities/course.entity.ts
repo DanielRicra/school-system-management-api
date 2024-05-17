@@ -5,7 +5,7 @@ export class CourseEntity {
     public name: string,
     public classroomId: number | null,
     public teacherId: string | null,
-    public createdAt: Date,
+    public createdAt: string,
     public updatedAt: string
   ) {}
 

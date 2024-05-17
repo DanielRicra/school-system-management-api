@@ -4,7 +4,7 @@ export class AssignmentEntity {
     public name: string,
     public dueDate: Date | null,
     public courseId: number | null,
-    public createdAt: Date,
+    public createdAt: string,
     public updatedAt: string
   ) {}
 

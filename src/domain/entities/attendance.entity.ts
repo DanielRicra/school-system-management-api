@@ -5,7 +5,7 @@ export class AttendanceEntity {
     public date: Date | null,
     public courseId: number,
     public studentId: string,
-    public createdAt: Date,
+    public createdAt: string,
     public updatedAt: string
   ) {}
 

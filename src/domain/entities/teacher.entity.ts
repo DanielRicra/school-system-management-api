@@ -5,7 +5,7 @@ export class TeacherEntity {
     public id: string,
     public department: string | null,
     public userId: string,
-    public createdAt: Date,
+    public createdAt: string,
     public updatedAt: string,
     public user?: UserEntity
   ) {}
