@@ -16,7 +16,7 @@ async function seed() {
     await db.insert(rooms).values(
       roomsMockData.map((room) => ({
         ...room,
-        createdAt: new Date(room.createdAt),
+        createdAt: room.createdAt,
         updatedAt: room.updatedAt,
       }))
     );

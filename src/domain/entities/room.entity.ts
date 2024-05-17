@@ -6,4 +6,8 @@ export class RoomEntity {
     public createdAt: string,
     public updatedAt: string
   ) {}
+
+  static getSortingFields() {
+    return ["id", "roomNumber", "capacity", "createdAt", "updatedAt"];
+  }
 }

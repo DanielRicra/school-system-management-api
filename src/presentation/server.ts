@@ -6,6 +6,7 @@ import express, {
   type Request,
 } from "express";
 import cors from "cors";
+import morgan from "morgan";
 
 type ServerOption = {
   port?: number;
@@ -29,6 +30,8 @@ export class Server {
     this.app.use(cors());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(morgan("tiny"));
+
     this.app.get("/", (req, res) => res.json({ url: "/api/v1" }));
     this.app.use("/api/v1", this.router);
     this.app.use((req, res) => {

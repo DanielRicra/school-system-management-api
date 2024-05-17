@@ -11,7 +11,7 @@ export class StudentEntity {
       | "graduated"
       | "transferred"
       | "inactive",
-    public createdAt: Date,
+    public createdAt: string,
     public updatedAt: string,
     public user?: UserEntity
   ) {}

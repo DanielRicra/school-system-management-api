@@ -1,0 +1,20 @@
+ALTER TABLE "administrators" ALTER COLUMN "created_at" SET DATA TYPE timestamp(0) with time zone;--> statement-breakpoint
+ALTER TABLE "administrators" ALTER COLUMN "updated_at" SET DATA TYPE timestamp(0) with time zone;--> statement-breakpoint
+ALTER TABLE "assignments" ALTER COLUMN "created_at" SET DATA TYPE timestamp(0) with time zone;--> statement-breakpoint
+ALTER TABLE "assignments" ALTER COLUMN "updated_at" SET DATA TYPE timestamp(0) with time zone;--> statement-breakpoint
+ALTER TABLE "attendance" ALTER COLUMN "created_at" SET DATA TYPE timestamp(0) with time zone;--> statement-breakpoint
+ALTER TABLE "attendance" ALTER COLUMN "updated_at" SET DATA TYPE timestamp(0) with time zone;--> statement-breakpoint
+ALTER TABLE "classrooms" ALTER COLUMN "created_at" SET DATA TYPE timestamp(0) with time zone;--> statement-breakpoint
+ALTER TABLE "classrooms" ALTER COLUMN "updated_at" SET DATA TYPE timestamp(0) with time zone;--> statement-breakpoint
+ALTER TABLE "courses" ALTER COLUMN "created_at" SET DATA TYPE timestamp(0) with time zone;--> statement-breakpoint
+ALTER TABLE "courses" ALTER COLUMN "updated_at" SET DATA TYPE timestamp(0) with time zone;--> statement-breakpoint
+ALTER TABLE "grades" ALTER COLUMN "created_at" SET DATA TYPE timestamp(0) with time zone;--> statement-breakpoint
+ALTER TABLE "grades" ALTER COLUMN "updated_at" SET DATA TYPE timestamp(0) with time zone;--> statement-breakpoint
+ALTER TABLE "rooms" ALTER COLUMN "created_at" SET DATA TYPE timestamp(0) with time zone;--> statement-breakpoint
+ALTER TABLE "rooms" ALTER COLUMN "updated_at" SET DATA TYPE timestamp(0) with time zone;--> statement-breakpoint
+ALTER TABLE "students" ALTER COLUMN "created_at" SET DATA TYPE timestamp(0) with time zone;--> statement-breakpoint
+ALTER TABLE "students" ALTER COLUMN "updated_at" SET DATA TYPE timestamp(0) with time zone;--> statement-breakpoint
+ALTER TABLE "teachers" ALTER COLUMN "created_at" SET DATA TYPE timestamp(0) with time zone;--> statement-breakpoint
+ALTER TABLE "teachers" ALTER COLUMN "updated_at" SET DATA TYPE timestamp(0) with time zone;--> statement-breakpoint
+ALTER TABLE "users" ALTER COLUMN "created_at" SET DATA TYPE timestamp(0) with time zone;--> statement-breakpoint
+ALTER TABLE "users" ALTER COLUMN "updated_at" SET DATA TYPE timestamp(0) with time zone;

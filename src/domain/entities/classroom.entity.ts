@@ -5,7 +5,7 @@ export class ClassroomEntity {
     public year: string,
     public section: string,
     public roomId: number | null,
-    public createdAt: Date,
+    public createdAt: string,
     public updatedAt: string
   ) {}
 

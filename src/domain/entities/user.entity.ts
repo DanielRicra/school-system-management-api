@@ -7,7 +7,7 @@ export class UserEntity {
     public role: "admin" | "student" | "teacher",
     public gender: string | null,
     public deletedAt: Date | null,
-    public createdAt: Date,
+    public createdAt: string,
     public updatedAt: string
   ) {}
 

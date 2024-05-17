@@ -4,7 +4,7 @@ export class GradeEntity {
     public grade: number | null,
     public studentId: string | null,
     public assignmentId: number | null,
-    public createdAt: Date,
+    public createdAt: string,
     public updatedAt: string
   ) {}
 
