@@ -1,10 +1,10 @@
-import type { Student, User } from "../../db";
-import { StudentEntity } from "../../domain/entities";
+import type { Student } from "../../db";
+import { StudentEntity, type UserEntity } from "../../domain/entities";
 import type { StudentQuery } from "../../domain/types";
 
 export class StudentMapper {
   static toStudentEntity(
-    student: { user?: User | null } & Student
+    student: { user?: UserEntity } & Student
   ): StudentEntity {
     return new StudentEntity(
       student.id,
