@@ -2,7 +2,7 @@ import { type SQL, sql, count, asc, desc, eq } from "drizzle-orm";
 import type { StudentDatasource } from "../../domain/datasources";
 import type { ListResponseEntity, StudentEntity } from "../../domain/entities";
 import type { QueryParams } from "../../types";
-import { ListResponseMapper, StudentMapper } from "../mappers";
+import { ListResponseMapper, StudentMapper, UserMapper } from "../mappers";
 import type { StudentQuery } from "../../domain/types";
 import { classrooms, db, students, users } from "../../db";
 import { CustomError } from "../../domain/errors";
@@ -49,7 +49,7 @@ export class StudentDatasourceImpl implements StudentDatasource {
         user: users,
       })
       .from(students)
-      .leftJoin(users, eq(students.userId, users.id))
+      .innerJoin(users, eq(students.userId, users.id))
       .$dynamic();
 
     if (whereSQL) {
@@ -71,9 +71,10 @@ export class StudentDatasourceImpl implements StudentDatasource {
 
     const result = await qb.limit(limit).offset(offset).orderBy(order);
 
-    const entities = result.map((student) =>
-      StudentMapper.toStudentEntity(student)
-    );
+    const entities = result.map((student) => {
+      const userEntity = UserMapper.toUserEntity(student.user);
+      return StudentMapper.toStudentEntity({ ...student, user: userEntity });
+    });
 
     return ListResponseMapper.listResponseFromEntities(
       { limit, offset, count: countResult },
@@ -256,7 +257,7 @@ export class StudentDatasourceImpl implements StudentDatasource {
     let qb = db
       .select({ count: count() })
       .from(students)
-      .leftJoin(users, eq(students.userId, users.id))
+      .innerJoin(users, eq(students.userId, users.id))
       .$dynamic();
 
     if (whereSql) {
