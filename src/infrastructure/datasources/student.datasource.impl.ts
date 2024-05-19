@@ -1,6 +1,6 @@
-import { type SQL, sql, count, asc, desc, eq } from "drizzle-orm";
+import { type SQL, sql, count, asc, desc, eq, ilike } from "drizzle-orm";
 import type { StudentDatasource } from "../../domain/datasources";
-import type { ListResponseEntity, StudentEntity } from "../../domain/entities";
+import { ListResponseEntity, type StudentEntity } from "../../domain/entities";
 import type { QueryParams } from "../../types";
 import { ListResponseMapper, StudentMapper, UserMapper } from "../mappers";
 import type { StudentQuery } from "../../domain/types";
@@ -18,23 +18,28 @@ export class StudentDatasourceImpl implements StudentDatasource {
     query: QueryParams
   ): Promise<ListResponseEntity<StudentEntity>> {
     const { limit, offset, otherParams } = query;
-    const { sortDir, classroomId, enrollmentStatus, gradeLevel, ordering } =
-      StudentMapper.studentQueryFromQueryParams(otherParams);
+    const {
+      sortDir,
+      classroomId,
+      enrollmentStatus,
+      gradeLevel,
+      ordering,
+      firstName,
+      surname,
+    } = StudentMapper.studentQueryFromQueryParams(otherParams);
 
     const whereSQL = this.withFilters({
       classroomId,
       enrollmentStatus,
       gradeLevel,
+      firstName,
+      surname,
     });
 
     const countResult = await this.countAll(whereSQL);
 
     if (countResult === 0) {
-      return ListResponseMapper.listResponseFromEntities(
-        { count: 0, limit, offset },
-        [],
-        "student"
-      );
+      return new ListResponseEntity();
     }
 
     let qb = db
@@ -230,20 +235,46 @@ export class StudentDatasourceImpl implements StudentDatasource {
     }
   }
 
-  private withFilters({
-    classroomId,
-    enrollmentStatus,
-    gradeLevel,
-  }: StudentQueryFilters): SQL | undefined {
+  private withFilters(queryFilters: StudentQueryFilters): SQL | undefined {
+    const { classroomId, enrollmentStatus, gradeLevel, firstName, surname } =
+      queryFilters;
+
     const filterSQls: SQL[] = [];
+
     if (classroomId) {
       filterSQls.push(sql`${students.classroomId} = ${classroomId}`);
     }
+
     if (enrollmentStatus) {
-      filterSQls.push(sql`${students.enrollmentStatus} = ${enrollmentStatus}`);
+      const esFilter = sql`(`;
+      for (let i = 0; i < enrollmentStatus.length; i++) {
+        esFilter.append(
+          sql`${students.enrollmentStatus} = ${enrollmentStatus[i]}`
+        );
+        if (i === enrollmentStatus.length - 1) continue;
+        esFilter.append(sql` or `);
+      }
+      esFilter.append(sql`)`);
+      filterSQls.push(esFilter);
     }
+
     if (gradeLevel) {
-      filterSQls.push(sql`${students.gradeLevel} = ${gradeLevel}`);
+      const glFilter = sql`(`;
+      for (let i = 0; i < gradeLevel.length; i++) {
+        glFilter.append(sql`${students.gradeLevel} = ${gradeLevel[i]}`);
+        if (i === gradeLevel.length - 1) continue;
+        glFilter.append(sql` or `);
+      }
+      glFilter.append(sql`)`);
+      filterSQls.push(glFilter);
+    }
+
+    if (firstName) {
+      filterSQls.push(ilike(users.firstName, `%${firstName}%`));
+    }
+
+    if (surname) {
+      filterSQls.push(ilike(users.surname, `%${surname}%`));
     }
 
     if (!filterSQls.length) {

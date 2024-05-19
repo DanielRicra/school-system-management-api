@@ -1,6 +1,6 @@
-export class ListResponseEntity<T> {
+export class ListResponseEntity<T = unknown> {
   constructor(
-    public info: {
+    public info?: {
       count: number;
       next: string | null;
       previous: string | null;
@@ -8,7 +8,7 @@ export class ListResponseEntity<T> {
       perPage: number;
       lastPage: number;
     },
-    public results: T[]
+    public results: T[] = []
   ) {}
 }
 export type ListResponseInfo = typeof ListResponseEntity.prototype.info;
