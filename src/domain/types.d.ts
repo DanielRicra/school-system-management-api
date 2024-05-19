@@ -41,7 +41,9 @@ export type UserQuery = {
 export type StudentQuery = {
   ordering?: keyof Student | "firstName" | "surname";
   sortDir: SortDir;
-} & Partial<Omit<Student, "id" | "createdAt" | "updatedAt" | "userId">>;
+  gradeLevel?: Student["gradeLevel"][];
+  enrollmentStatus?: Student["enrollmentStatus"][];
+} & Partial<Pick<Student, "classroomId">>;
 
 export type TeacherQuery = {
   ordering?: keyof Teacher;
