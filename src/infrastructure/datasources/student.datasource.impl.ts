@@ -240,10 +240,26 @@ export class StudentDatasourceImpl implements StudentDatasource {
       filterSQls.push(sql`${students.classroomId} = ${classroomId}`);
     }
     if (enrollmentStatus) {
-      filterSQls.push(sql`${students.enrollmentStatus} = ${enrollmentStatus}`);
+      const esFilter = sql`(`;
+      for (let i = 0; i < enrollmentStatus.length; i++) {
+        esFilter.append(
+          sql`${students.enrollmentStatus} = ${enrollmentStatus[i]}`
+        );
+        if (i === enrollmentStatus.length - 1) continue;
+        esFilter.append(sql` or `);
+      }
+      esFilter.append(sql`)`);
+      filterSQls.push(esFilter);
     }
     if (gradeLevel) {
-      filterSQls.push(sql`${students.gradeLevel} = ${gradeLevel}`);
+      const glFilter = sql`(`;
+      for (let i = 0; i < gradeLevel.length; i++) {
+        glFilter.append(sql`${students.gradeLevel} = ${gradeLevel[i]}`);
+        if (i === gradeLevel.length - 1) continue;
+        glFilter.append(sql` or `);
+      }
+      glFilter.append(sql`)`);
+      filterSQls.push(glFilter);
     }
 
     if (!filterSQls.length) {
