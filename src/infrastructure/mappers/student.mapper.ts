@@ -1,6 +1,7 @@
 import type { Student } from "../../db";
 import { StudentEntity, type UserEntity } from "../../domain/entities";
 import type { StudentQuery } from "../../domain/types";
+import { checkEnrollmentStatus, checkGradeLevel } from "../utils/helper";
 
 export class StudentMapper {
   static toStudentEntity(
@@ -22,6 +23,8 @@ export class StudentMapper {
     [key: string]: string | undefined;
   }): StudentQuery {
     const { ordering, classroom_id, enrollment_status, grade_level } = query;
+    const gradeLevel = checkGradeLevel(grade_level);
+    const enrollmentStatus = checkEnrollmentStatus(enrollment_status);
 
     let sortField: string | undefined = ordering?.startsWith("-")
       ? ordering.slice(1)
@@ -44,8 +47,8 @@ export class StudentMapper {
       ordering: sortField as StudentQuery["ordering"],
       sortDir: ordering?.startsWith("-") ? "desc" : "asc",
       classroomId: Number(classroom_id),
-      enrollmentStatus: enrollment_status as StudentQuery["enrollmentStatus"],
-      gradeLevel: grade_level as StudentQuery["gradeLevel"],
+      enrollmentStatus: enrollmentStatus,
+      gradeLevel: gradeLevel,
     };
   }
 }
