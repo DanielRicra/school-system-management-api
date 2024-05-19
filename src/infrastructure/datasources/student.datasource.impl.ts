@@ -30,11 +30,7 @@ export class StudentDatasourceImpl implements StudentDatasource {
     const countResult = await this.countAll(whereSQL);
 
     if (countResult === 0) {
-      return ListResponseMapper.listResponseFromEntities(
-        { count: 0, limit, offset },
-        [],
-        "student"
-      );
+      return new ListResponseEntity();
     }
 
     let qb = db
