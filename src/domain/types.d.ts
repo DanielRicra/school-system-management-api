@@ -43,6 +43,8 @@ export type StudentQuery = {
   sortDir: SortDir;
   gradeLevel?: Student["gradeLevel"][];
   enrollmentStatus?: Student["enrollmentStatus"][];
+  firstName?: string;
+  surname?: string;
 } & Partial<Pick<Student, "classroomId">>;
 
 export type TeacherQuery = {

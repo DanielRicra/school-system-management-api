@@ -22,7 +22,14 @@ export class StudentMapper {
   static studentQueryFromQueryParams(query: {
     [key: string]: string | undefined;
   }): StudentQuery {
-    const { ordering, classroom_id, enrollment_status, grade_level } = query;
+    const {
+      ordering,
+      classroom_id,
+      enrollment_status,
+      grade_level,
+      first_name: firstName,
+      surname,
+    } = query;
     const gradeLevel = checkGradeLevel(grade_level);
     const enrollmentStatus = checkEnrollmentStatus(enrollment_status);
 
@@ -49,6 +56,8 @@ export class StudentMapper {
       classroomId: Number(classroom_id),
       enrollmentStatus: enrollmentStatus,
       gradeLevel: gradeLevel,
+      firstName,
+      surname,
     };
   }
 }

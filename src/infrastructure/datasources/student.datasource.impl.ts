@@ -1,6 +1,6 @@
-import { type SQL, sql, count, asc, desc, eq } from "drizzle-orm";
+import { type SQL, sql, count, asc, desc, eq, ilike } from "drizzle-orm";
 import type { StudentDatasource } from "../../domain/datasources";
-import type { ListResponseEntity, StudentEntity } from "../../domain/entities";
+import { ListResponseEntity, type StudentEntity } from "../../domain/entities";
 import type { QueryParams } from "../../types";
 import { ListResponseMapper, StudentMapper, UserMapper } from "../mappers";
 import type { StudentQuery } from "../../domain/types";
@@ -18,13 +18,22 @@ export class StudentDatasourceImpl implements StudentDatasource {
     query: QueryParams
   ): Promise<ListResponseEntity<StudentEntity>> {
     const { limit, offset, otherParams } = query;
-    const { sortDir, classroomId, enrollmentStatus, gradeLevel, ordering } =
-      StudentMapper.studentQueryFromQueryParams(otherParams);
+    const {
+      sortDir,
+      classroomId,
+      enrollmentStatus,
+      gradeLevel,
+      ordering,
+      firstName,
+      surname,
+    } = StudentMapper.studentQueryFromQueryParams(otherParams);
 
     const whereSQL = this.withFilters({
       classroomId,
       enrollmentStatus,
       gradeLevel,
+      firstName,
+      surname,
     });
 
     const countResult = await this.countAll(whereSQL);
@@ -226,15 +235,16 @@ export class StudentDatasourceImpl implements StudentDatasource {
     }
   }
 
-  private withFilters({
-    classroomId,
-    enrollmentStatus,
-    gradeLevel,
-  }: StudentQueryFilters): SQL | undefined {
+  private withFilters(queryFilters: StudentQueryFilters): SQL | undefined {
+    const { classroomId, enrollmentStatus, gradeLevel, firstName, surname } =
+      queryFilters;
+
     const filterSQls: SQL[] = [];
+
     if (classroomId) {
       filterSQls.push(sql`${students.classroomId} = ${classroomId}`);
     }
+
     if (enrollmentStatus) {
       const esFilter = sql`(`;
       for (let i = 0; i < enrollmentStatus.length; i++) {
@@ -247,6 +257,7 @@ export class StudentDatasourceImpl implements StudentDatasource {
       esFilter.append(sql`)`);
       filterSQls.push(esFilter);
     }
+
     if (gradeLevel) {
       const glFilter = sql`(`;
       for (let i = 0; i < gradeLevel.length; i++) {
@@ -256,6 +267,14 @@ export class StudentDatasourceImpl implements StudentDatasource {
       }
       glFilter.append(sql`)`);
       filterSQls.push(glFilter);
+    }
+
+    if (firstName) {
+      filterSQls.push(ilike(users.firstName, `%${firstName}%`));
+    }
+
+    if (surname) {
+      filterSQls.push(ilike(users.surname, `%${surname}%`));
     }
 
     if (!filterSQls.length) {
