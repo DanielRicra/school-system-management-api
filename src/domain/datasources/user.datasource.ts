@@ -24,4 +24,7 @@ export abstract class UserDatasource {
     id: UserEntity["id"],
     patchUserDTO: PatchUserDTO
   ): Promise<UserEntity>;
+  abstract findUsersWithoutStudent(query: {
+    fullName?: string;
+  }): Promise<(Pick<UserEntity, "id"> & { fullName: string })[]>;
 }

@@ -13,6 +13,7 @@ export class UserRoutes {
     const controller = new UserController(repository);
 
     router.get("/", AuthMiddleware.checkUserRole("admin"), controller.findAll);
+    router.get("/without-student", controller.findUsersWithoutStudent);
     router.get(
       "/:id",
       AuthorizationMiddleware.checkOwnerOrAdmin,

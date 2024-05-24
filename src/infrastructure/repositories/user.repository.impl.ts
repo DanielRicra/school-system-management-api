@@ -45,4 +45,10 @@ export class UserRepositoryImpl implements UserRepository {
   patch(id: string, patchUserDTO: PatchUserDTO): Promise<UserEntity> {
     return this.userDatasource.patch(id, patchUserDTO);
   }
+
+  findUsersWithoutStudent(query: { fullName?: string | undefined }): Promise<
+    (Pick<UserEntity, "id"> & { fullName: string })[]
+  > {
+    return this.userDatasource.findUsersWithoutStudent(query);
+  }
 }

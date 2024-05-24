@@ -29,10 +29,17 @@ export class UserMapper {
     );
   }
 
+  static userWithoutStudents(user: Pick<User, "id"> & { fullName: string }) {
+    return {
+      id: user.id,
+      fullName: user.fullName,
+    };
+  }
+
   static userQueryFromQueryParams(query: {
     [key: string]: string | undefined;
   }): UserQuery {
-    const { ordering, role, gender } = query;
+    const { ordering, role, gender, first_name, surname } = query;
 
     let sortField: string | undefined = ordering?.startsWith("-")
       ? ordering.slice(1)
@@ -54,6 +61,8 @@ export class UserMapper {
       sortDir: ordering?.startsWith("-") ? "desc" : "asc",
       role: role as User["role"],
       gender,
+      firstName: first_name?.trim(),
+      surname: surname?.trim(),
     };
   }
 }
