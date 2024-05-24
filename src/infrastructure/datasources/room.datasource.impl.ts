@@ -1,7 +1,7 @@
 import { type SQL, asc, desc, eq, count, sql } from "drizzle-orm";
 import { db, rooms } from "../../db";
 import type { RoomDatasource } from "../../domain/datasources";
-import type { ListResponseEntity, RoomEntity } from "../../domain/entities";
+import { ListResponseEntity, type RoomEntity } from "../../domain/entities";
 import { CustomError } from "../../domain/errors";
 import { ListResponseMapper, RoomMapper } from "../mappers";
 import type { QueryParams } from "../../types";
@@ -24,11 +24,7 @@ export class RoomDatasourceImpl implements RoomDatasource {
       });
 
       if (count === 0) {
-        return ListResponseMapper.listResponseFromEntities(
-          { count, limit, offset },
-          [],
-          "room"
-        );
+        return new ListResponseEntity();
       }
 
       let qb = db.select().from(rooms).$dynamic();

@@ -11,7 +11,7 @@ import {
 } from "drizzle-orm";
 import { db, users } from "../../db";
 import type { UserDatasource } from "../../domain/datasources";
-import type { ListResponseEntity, UserEntity } from "../../domain/entities";
+import { ListResponseEntity, type UserEntity } from "../../domain/entities";
 import { CustomError } from "../../domain/errors";
 import type { UserQuery } from "../../domain/types";
 import type { QueryParams } from "../../types";
@@ -44,11 +44,7 @@ export class UserDatasourceImpl implements UserDatasource {
     const countResult = await this.countAll(whereSQL);
 
     if (countResult === 0) {
-      return ListResponseMapper.listResponseFromEntities(
-        { count: 0, limit, offset },
-        [],
-        "user"
-      );
+      return new ListResponseEntity();
     }
 
     let qb = db.select().from(users).$dynamic();

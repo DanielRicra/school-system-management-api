@@ -1,6 +1,6 @@
 import { type SQL, sql, count, asc, desc, eq } from "drizzle-orm";
 import type { CourseDatasource } from "../../domain/datasources";
-import type { ListResponseEntity, CourseEntity } from "../../domain/entities";
+import { ListResponseEntity, type CourseEntity } from "../../domain/entities";
 import type { QueryParams } from "../../types";
 import { ListResponseMapper, CourseMapper } from "../mappers";
 import type { CourseQuery } from "../../domain/types";
@@ -21,11 +21,7 @@ export class CourseDatasourceImpl implements CourseDatasource {
     const countResult = await this.countAll(whereSQL);
 
     if (countResult === 0) {
-      return ListResponseMapper.listResponseFromEntities(
-        { count: 0, limit, offset },
-        [],
-        "course"
-      );
+      return new ListResponseEntity();
     }
 
     let qb = db.select().from(courses).$dynamic();

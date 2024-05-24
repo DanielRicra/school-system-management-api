@@ -6,9 +6,9 @@ import type {
   PatchClassroomDTO,
   UpdateClassroomDTO,
 } from "../../domain/dtos/classroom";
-import type {
+import {
   ListResponseEntity,
-  ClassroomEntity,
+  type ClassroomEntity,
 } from "../../domain/entities";
 import type { ClassroomQuery } from "../../domain/types";
 import type { QueryParams } from "../../types";
@@ -33,11 +33,7 @@ export class ClassroomDatasourceImpl implements ClassroomDatasource {
     });
 
     if (count === 0) {
-      return ListResponseMapper.listResponseFromEntities(
-        { count: 0, limit, offset },
-        [],
-        "classroom"
-      );
+      return new ListResponseEntity();
     }
 
     let qb = db.select().from(classrooms).$dynamic();

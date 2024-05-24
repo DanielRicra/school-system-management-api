@@ -1,8 +1,8 @@
 import { type SQL, sql, count, asc, desc, eq, isNull } from "drizzle-orm";
 import type { AssignmentDatasource } from "../../domain/datasources";
-import type {
+import {
   ListResponseEntity,
-  AssignmentEntity,
+  type AssignmentEntity,
 } from "../../domain/entities";
 import type { QueryParams } from "../../types";
 import { ListResponseMapper, AssignmentMapper } from "../mappers";
@@ -29,11 +29,7 @@ export class AssignmentDatasourceImpl implements AssignmentDatasource {
     const countResult = await this.countAll(whereSQL);
 
     if (countResult === 0) {
-      return ListResponseMapper.listResponseFromEntities(
-        { count: 0, limit, offset },
-        [],
-        "assignment"
-      );
+      return new ListResponseEntity();
     }
 
     let qb = db.select().from(assignments).$dynamic();

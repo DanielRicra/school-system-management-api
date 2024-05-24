@@ -1,8 +1,8 @@
 import { type SQL, sql, count, asc, desc, eq, and, isNull } from "drizzle-orm";
 import type { AttendanceDatasource } from "../../domain/datasources";
-import type {
+import {
   ListResponseEntity,
-  AttendanceEntity,
+  type AttendanceEntity,
 } from "../../domain/entities";
 import type { QueryParams } from "../../types";
 import { ListResponseMapper, AttendanceMapper } from "../mappers";
@@ -42,11 +42,7 @@ export class AttendanceDatasourceImpl implements AttendanceDatasource {
     const countResult = await this.countAll(whereSQL);
 
     if (countResult === 0) {
-      return ListResponseMapper.listResponseFromEntities(
-        { count: 0, limit, offset },
-        [],
-        "attendance"
-      );
+      return new ListResponseEntity();
     }
 
     let qb = db.select().from(attendance).$dynamic();
