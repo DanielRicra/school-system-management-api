@@ -1,6 +1,6 @@
 import { type SQL, sql, count, asc, desc, eq } from "drizzle-orm";
 import type { TeacherDatasource } from "../../domain/datasources";
-import type { ListResponseEntity, TeacherEntity } from "../../domain/entities";
+import { ListResponseEntity, type TeacherEntity } from "../../domain/entities";
 import type { QueryParams } from "../../types";
 import { ListResponseMapper, TeacherMapper } from "../mappers";
 import type { TeacherQuery } from "../../domain/types";
@@ -28,11 +28,7 @@ export class TeacherDatasourceImpl implements TeacherDatasource {
     const countResult = await this.countAll(whereSQL);
 
     if (countResult === 0) {
-      return ListResponseMapper.listResponseFromEntities(
-        { count: 0, limit, offset },
-        [],
-        "teacher"
-      );
+      return new ListResponseEntity();
     }
 
     let qb = db.select().from(teachers).$dynamic();
@@ -56,7 +52,7 @@ export class TeacherDatasourceImpl implements TeacherDatasource {
     return ListResponseMapper.listResponseFromEntities(
       { limit, offset, count: countResult },
       entities,
-      "teacher"
+      "teachers"
     );
   }
 

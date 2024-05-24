@@ -1,6 +1,6 @@
 import { type SQL, sql, count, asc, desc, eq } from "drizzle-orm";
 import type { GradeDatasource } from "../../domain/datasources";
-import type { ListResponseEntity, GradeEntity } from "../../domain/entities";
+import { ListResponseEntity, type GradeEntity } from "../../domain/entities";
 import type { QueryParams } from "../../types";
 import { ListResponseMapper, GradeMapper } from "../mappers";
 import type { GradeQuery } from "../../domain/types";
@@ -26,11 +26,7 @@ export class GradeDatasourceImpl implements GradeDatasource {
     const countResult = await this.countAll(whereSQL);
 
     if (countResult === 0) {
-      return ListResponseMapper.listResponseFromEntities(
-        { count: 0, limit, offset },
-        [],
-        "grade"
-      );
+      return new ListResponseEntity();
     }
 
     let qb = db.select().from(grades).$dynamic();
@@ -52,7 +48,7 @@ export class GradeDatasourceImpl implements GradeDatasource {
     return ListResponseMapper.listResponseFromEntities(
       { limit, offset, count: countResult },
       entities,
-      "grade"
+      "grades"
     );
   }
 
