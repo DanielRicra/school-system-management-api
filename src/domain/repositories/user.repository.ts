@@ -24,4 +24,7 @@ export abstract class UserRepository {
     id: UserEntity["id"],
     patchUserDTO: PatchUserDTO
   ): Promise<UserEntity>;
+  abstract findUsersWithoutStudent(query: { fullName?: string }): Promise<
+    (Pick<UserEntity, "id"> & { fullName: string })[]
+  >;
 }

@@ -8,8 +8,9 @@ import {
   and,
   ne,
   isNull,
+  ilike,
 } from "drizzle-orm";
-import { db, users } from "../../db";
+import { db, students, users } from "../../db";
 import type { UserDatasource } from "../../domain/datasources";
 import { ListResponseEntity, type UserEntity } from "../../domain/entities";
 import { CustomError } from "../../domain/errors";
@@ -195,6 +196,32 @@ export class UserDatasourceImpl implements UserDatasource {
     }
 
     return UserMapper.toUserEntity(result[0]);
+  }
+
+  async findUsersWithoutStudent(query: { fullName?: string }): Promise<
+    (Pick<UserEntity, "id"> & { fullName: string })[]
+  > {
+    const [surname, firstName] = query.fullName?.split(",") ?? [];
+    const result = await db
+      .select({
+        id: users.id,
+        fullName: sql<string>`concat(upper(${users.surname}),', ',${users.firstName})`,
+      })
+      .from(users)
+      .leftJoin(students, eq(users.id, students.userId))
+      .where(
+        and(
+          eq(users.role, "student"),
+          isNull(students.userId),
+          isNull(users.deletedAt),
+          surname ? ilike(users.surname, `%${surname}%`) : undefined,
+          firstName ? ilike(users.firstName, `%${firstName}%`) : undefined
+        )
+      );
+
+    const entities = result.map((user) => UserMapper.userWithoutStudents(user));
+
+    return entities;
   }
 
   private withFilters({ gender, role }: UserQueryFilters): SQL | undefined {
