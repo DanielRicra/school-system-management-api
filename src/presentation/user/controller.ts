@@ -18,6 +18,7 @@ import {
   UserParamsDTO,
 } from "../../domain/dtos/user";
 import { CreateUserDTO } from "../../domain/dtos/user";
+import { FindUsersWithoutStudent } from "../../domain/use-cases/user/find-users-without-student";
 
 export class UserController extends MainController {
   constructor(private readonly userRepository: UserRepository) {
@@ -139,6 +140,15 @@ export class UserController extends MainController {
 
     new Patch(this.userRepository)
       .execute(userParamsDTO.id, patchUserDTO)
+      .then((data) => res.json(data))
+      .catch((err) => this.handleErrors(err, res));
+  };
+
+  findUsersWithoutStudent: RequestHandler = (req, res) => {
+    const { full_name: fullName } = req.query;
+
+    new FindUsersWithoutStudent(this.userRepository)
+      .execute({ fullName: fullName as string })
       .then((data) => res.json(data))
       .catch((err) => this.handleErrors(err, res));
   };
