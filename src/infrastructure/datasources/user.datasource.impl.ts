@@ -68,7 +68,7 @@ export class UserDatasourceImpl implements UserDatasource {
     return ListResponseMapper.listResponseFromEntities(
       { limit, offset, count: countResult },
       usersEntities,
-      "user"
+      "users"
     );
   }
 

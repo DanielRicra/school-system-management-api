@@ -49,7 +49,7 @@ export class CourseDatasourceImpl implements CourseDatasource {
     return ListResponseMapper.listResponseFromEntities(
       { limit, offset, count: countResult },
       entities,
-      "course"
+      "courses"
     );
   }
 

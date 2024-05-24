@@ -59,7 +59,7 @@ export class AssignmentDatasourceImpl implements AssignmentDatasource {
     return ListResponseMapper.listResponseFromEntities(
       { limit, offset, count: countResult },
       entities,
-      "assignment"
+      "assignments"
     );
   }
 

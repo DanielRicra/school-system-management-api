@@ -72,7 +72,7 @@ export class AttendanceDatasourceImpl implements AttendanceDatasource {
     return ListResponseMapper.listResponseFromEntities(
       { limit, offset, count: countResult },
       entities,
-      "attendance"
+      "attendances"
     );
   }
 

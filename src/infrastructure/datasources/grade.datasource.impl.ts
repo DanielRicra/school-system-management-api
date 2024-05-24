@@ -52,7 +52,7 @@ export class GradeDatasourceImpl implements GradeDatasource {
     return ListResponseMapper.listResponseFromEntities(
       { limit, offset, count: countResult },
       entities,
-      "grade"
+      "grades"
     );
   }
 

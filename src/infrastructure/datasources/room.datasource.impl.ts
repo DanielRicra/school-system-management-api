@@ -54,7 +54,7 @@ export class RoomDatasourceImpl implements RoomDatasource {
       return ListResponseMapper.listResponseFromEntities<RoomEntity>(
         { limit, offset, count },
         roomsEntities,
-        "room"
+        "rooms"
       );
     } catch (error) {
       if (error instanceof CustomError) throw error;

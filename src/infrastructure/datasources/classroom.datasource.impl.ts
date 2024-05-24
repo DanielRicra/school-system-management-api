@@ -66,7 +66,7 @@ export class ClassroomDatasourceImpl implements ClassroomDatasource {
     return ListResponseMapper.listResponseFromEntities(
       { count, limit, offset },
       classroomEntities,
-      "classroom"
+      "classrooms"
     );
   }
 

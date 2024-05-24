@@ -56,7 +56,7 @@ export class TeacherDatasourceImpl implements TeacherDatasource {
     return ListResponseMapper.listResponseFromEntities(
       { limit, offset, count: countResult },
       entities,
-      "teacher"
+      "teachers"
     );
   }
 
