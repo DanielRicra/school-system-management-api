@@ -84,7 +84,7 @@ export class StudentDatasourceImpl implements StudentDatasource {
     return ListResponseMapper.listResponseFromEntities(
       { limit, offset, count: countResult },
       entities,
-      "student"
+      "students"
     );
   }
 
