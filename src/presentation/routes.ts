@@ -19,25 +19,25 @@ export class AppRoutes {
       // biome-ignore format: Leave alone the next line
       res.send({
         routes: [
-          "/auth", "/room", "/classroom", "/user", "/student", "/teacher", "/courses",
-          "/assignment", "/grade", "/attendance"
+          "/auth", "/rooms", "/classrooms", "/users", "/students", "/teachers", "/courses",
+          "/assignments", "/grades", "/attendances"
         ],
       });
     });
     router.use("/auth", AuthRoutes.routes);
 
     router.use("/", AuthMiddleware.validateJwt);
-    router.use("/user", UserRoutes.routes);
+    router.use("/users", UserRoutes.routes);
     
     router.use("/", AuthMiddleware.checkUserRole("admin"));
-    router.use("/room", RoomRoutes.routes);
-    router.use("/classroom", ClassroomRoutes.routes);
-    router.use("/student", StudentRoutes.routes);
-    router.use("/teacher", TeacherRoutes.routes);
-    router.use("/course", CourseRoutes.routes);
-    router.use("/assignment", AssignmentRoutes.routes);
-    router.use("/grade", GradeRoutes.routes);
-    router.use("/attendance", AttendanceRoutes.routes);
+    router.use("/rooms", RoomRoutes.routes);
+    router.use("/classrooms", ClassroomRoutes.routes);
+    router.use("/students", StudentRoutes.routes);
+    router.use("/teachers", TeacherRoutes.routes);
+    router.use("/courses", CourseRoutes.routes);
+    router.use("/assignments", AssignmentRoutes.routes);
+    router.use("/grades", GradeRoutes.routes);
+    router.use("/attendances", AttendanceRoutes.routes);
 
     return router;
   }
