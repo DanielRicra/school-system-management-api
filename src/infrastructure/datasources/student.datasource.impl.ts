@@ -10,6 +10,7 @@ import type {
   CreateStudentDTO,
   PatchStudentDTO,
 } from "../../domain/dtos/student";
+import { getStudentById } from "../../db/queries";
 
 type StudentQueryFilters = Omit<StudentQuery, "sortDir" | "ordering">;
 
@@ -89,7 +90,7 @@ export class StudentDatasourceImpl implements StudentDatasource {
   }
 
   async findOne(id: string): Promise<StudentEntity> {
-    const result = await db.select().from(students).where(eq(students.id, id));
+    const result = await getStudentById(id);
 
     if (!result.length) throw CustomError.notFound("Student not found.");
 
