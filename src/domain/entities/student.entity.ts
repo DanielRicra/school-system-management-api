@@ -1,3 +1,4 @@
+import type { ClassroomEntity } from "./classroom.entity";
 import type { UserEntity } from "./user.entity";
 
 export class StudentEntity {
@@ -13,7 +14,8 @@ export class StudentEntity {
       | "inactive",
     public createdAt: string,
     public updatedAt: string,
-    public user?: UserEntity
+    public user?: UserEntity,
+    public classroom?: ClassroomEntity | null
   ) {}
 
   static getSortingFields() {
