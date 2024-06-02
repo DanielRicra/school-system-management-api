@@ -1,11 +1,15 @@
 import type { Student } from "../../db";
-import { StudentEntity, type UserEntity } from "../../domain/entities";
+import {
+  type ClassroomEntity,
+  StudentEntity,
+  type UserEntity,
+} from "../../domain/entities";
 import type { StudentQuery } from "../../domain/types";
 import { checkEnrollmentStatus, checkGradeLevel } from "../utils/helper";
 
 export class StudentMapper {
   static toStudentEntity(
-    student: { user?: UserEntity } & Student
+    student: { user?: UserEntity; classroom?: ClassroomEntity | null } & Student
   ): StudentEntity {
     return new StudentEntity(
       student.id,
@@ -15,7 +19,8 @@ export class StudentMapper {
       student.enrollmentStatus,
       student.createdAt,
       student.updatedAt,
-      student.user ?? undefined
+      student.user ?? undefined,
+      student.classroom ?? undefined
     );
   }
 
