@@ -3,6 +3,7 @@ import { MainController } from "../main-controller";
 import { computePaginationOffsetAndLimit, parsePKIntegerValue } from "../utils";
 import {
   FindAll,
+  FindClassroomStudents,
   FindOne,
   Patch,
   Remove,
@@ -87,6 +88,13 @@ export class ClassroomController extends MainController {
 
     new Patch(this.classroomRepository)
       .execute(Number(req.params.id), patchClassroomDTO)
+      .then((data) => res.json(data))
+      .catch((err) => this.handleErrors(err, res));
+  };
+
+  findClassroomStudents: RequestHandler = (req, res) => {
+    new FindClassroomStudents(this.classroomRepository)
+      .execute(parsePKIntegerValue(req.params.id))
       .then((data) => res.json(data))
       .catch((err) => this.handleErrors(err, res));
   };

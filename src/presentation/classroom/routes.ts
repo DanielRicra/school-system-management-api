@@ -15,7 +15,9 @@ export class ClassroomRoutes {
     router.post("/", controller.create);
     router.put("/:id", controller.update);
     router.delete("/:id", controller.remove);
-    router.patch("/:id", controller.patch)
+    router.patch("/:id", controller.patch);
+
+    router.get("/:id/students", controller.findClassroomStudents);
 
     return router;
   }

@@ -8,13 +8,19 @@ import type {
 } from "../../domain/dtos/classroom";
 import {
   ListResponseEntity,
+  type StudentEntity,
   type ClassroomEntity,
 } from "../../domain/entities";
 import type { ClassroomQuery } from "../../domain/types";
 import type { QueryParams } from "../../types";
-import { ClassroomMapper, ListResponseMapper } from "../mappers";
+import {
+  ClassroomMapper,
+  ListResponseMapper,
+  StudentMapper,
+  UserMapper,
+} from "../mappers";
 import { CustomError } from "../../domain/errors";
-import { getClassroomById } from "../../db/queries";
+import { getClassroomById, getStudentsByClassroomId } from "../../db/queries";
 
 type ClassroomQueryFilters = Omit<ClassroomQuery, "ordering" | "sortDir">;
 
@@ -178,6 +184,23 @@ export class ClassroomDatasourceImpl implements ClassroomDatasource {
     }
 
     return ClassroomMapper.toClassroomEntity(result[0]);
+  }
+
+  async findClassroomStudents(
+    id: ClassroomEntity["id"]
+  ): Promise<StudentEntity[]> {
+    const existingClassroom = await getClassroomById(id);
+
+    if (!existingClassroom.length) {
+      throw CustomError.notFound("Classroom not found");
+    }
+
+    const result = await getStudentsByClassroomId(id);
+    const entities = result.map((student) => {
+      const userEntity = UserMapper.toUserEntity(student.user);
+      return StudentMapper.toStudentEntity({ ...student, user: userEntity });
+    });
+    return entities;
   }
 
   private withFilters({

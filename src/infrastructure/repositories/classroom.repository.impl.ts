@@ -7,6 +7,7 @@ import type {
 import type {
   ListResponseEntity,
   ClassroomEntity,
+  StudentEntity,
 } from "../../domain/entities";
 import type { ClassroomRepository } from "../../domain/repositories";
 import type { QueryParams } from "../../types";
@@ -42,5 +43,9 @@ export class ClassroomRepositoryImpl implements ClassroomRepository {
     patchClassroomDTO: PatchClassroomDTO
   ): Promise<ClassroomEntity> {
     return this.classroomDatasource.patch(id, patchClassroomDTO);
+  }
+
+  findClassroomStudents(id: ClassroomEntity["id"]): Promise<StudentEntity[]> {
+    return this.classroomDatasource.findClassroomStudents(id);
   }
 }
