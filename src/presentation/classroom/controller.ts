@@ -1,6 +1,6 @@
 import type { RequestHandler } from "express";
 import { MainController } from "../main-controller";
-import { computePaginationOffsetAndLimit } from "../utils";
+import { computePaginationOffsetAndLimit, parsePKIntegerValue } from "../utils";
 import {
   FindAll,
   FindOne,
@@ -37,7 +37,7 @@ export class ClassroomController extends MainController {
 
   findOne: RequestHandler = (req, res) => {
     new FindOne(this.classroomRepository)
-      .execute(+req.params.id)
+      .execute(parsePKIntegerValue(req.params.id))
       .then((data) => res.json(data))
       .catch((error) => this.handleErrors(error, res));
   };
