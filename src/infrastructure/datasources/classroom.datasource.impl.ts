@@ -14,6 +14,7 @@ import type { ClassroomQuery } from "../../domain/types";
 import type { QueryParams } from "../../types";
 import { ClassroomMapper, ListResponseMapper } from "../mappers";
 import { CustomError } from "../../domain/errors";
+import { getClassroomById } from "../../db/queries";
 
 type ClassroomQueryFilters = Omit<ClassroomQuery, "ordering" | "sortDir">;
 
@@ -78,11 +79,7 @@ export class ClassroomDatasourceImpl implements ClassroomDatasource {
   }
 
   async findOne(id: ClassroomEntity["id"]): Promise<ClassroomEntity> {
-    const classroomResult = await db
-      .select()
-      .from(classrooms)
-      .where(eq(classrooms.id, id > 0 ? id : 0))
-      .limit(1);
+    const classroomResult = await getClassroomById(id);
 
     if (classroomResult.length === 0) {
       throw CustomError.notFound("Classroom not found");
