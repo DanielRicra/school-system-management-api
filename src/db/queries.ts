@@ -28,3 +28,23 @@ export function getStudentById(
     .leftJoin(classrooms, eq(students.classroomId, classrooms.id))
     .where(eq(students.id, id));
 }
+
+export function getStudentsByClassroomId(
+  classroomId: Classroom["id"]
+): Promise<Array<Student & { user: User }>> {
+  return db
+    .select({
+      ...getTableColumns(students),
+      user: users,
+    })
+    .from(students)
+    .innerJoin(users, eq(students.userId, users.id))
+    .leftJoin(classrooms, eq(students.classroomId, classrooms.id))
+    .where(eq(classrooms.id, classroomId));
+}
+
+export function getClassroomById(
+  id: Classroom["id"]
+): Promise<Array<Classroom>> {
+  return db.select().from(classrooms).where(eq(classrooms.id, id)).limit(1);
+}
