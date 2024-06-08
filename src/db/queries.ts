@@ -7,6 +7,7 @@ import {
   classrooms,
   type User,
   type Classroom,
+  teachers,
 } from "./drizzle/schema";
 
 export function getStudentById(
@@ -47,4 +48,11 @@ export function getClassroomById(
   id: Classroom["id"]
 ): Promise<Array<Classroom>> {
   return db.select().from(classrooms).where(eq(classrooms.id, id)).limit(1);
+}
+
+export function getTeachersWithUser() {
+  return db
+    .select({ ...getTableColumns(teachers), user: users })
+    .from(teachers)
+    .innerJoin(users, eq(teachers.userId, users.id));
 }
