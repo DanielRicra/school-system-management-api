@@ -2,7 +2,7 @@ import { type SQL, sql, count, asc, desc, eq } from "drizzle-orm";
 import type { TeacherDatasource } from "../../domain/datasources";
 import { ListResponseEntity, type TeacherEntity } from "../../domain/entities";
 import type { QueryParams } from "../../types";
-import { ListResponseMapper, TeacherMapper } from "../mappers";
+import { ListResponseMapper, TeacherMapper, UserMapper } from "../mappers";
 import type { TeacherQuery } from "../../domain/types";
 import { db, teachers, users } from "../../db";
 import { CustomError } from "../../domain/errors";
@@ -10,6 +10,7 @@ import type {
   CreateTeacherDTO,
   PatchTeacherDTO,
 } from "../../domain/dtos/teacher";
+import { getTeachersWithUser } from "../../db/queries";
 
 type TeacherQueryFilters = Omit<TeacherQuery, "sortDir" | "ordering">;
 
@@ -31,7 +32,7 @@ export class TeacherDatasourceImpl implements TeacherDatasource {
       return new ListResponseEntity();
     }
 
-    let qb = db.select().from(teachers).$dynamic();
+    let qb = getTeachersWithUser().$dynamic();
 
     if (whereSQL) {
       qb = qb.where(whereSQL);
@@ -45,9 +46,10 @@ export class TeacherDatasourceImpl implements TeacherDatasource {
 
     const result = await qb.limit(limit).offset(offset).orderBy(order);
 
-    const entities = result.map((teacher) =>
-      TeacherMapper.toTeacherEntity(teacher)
-    );
+    const entities = result.map((teacher) => {
+      const userEntity = UserMapper.toUserEntity(teacher.user);
+      return TeacherMapper.toTeacherEntity({ ...teacher, user: userEntity });
+    });
 
     return ListResponseMapper.listResponseFromEntities(
       { limit, offset, count: countResult },

@@ -1,15 +1,18 @@
 import type { Teacher } from "../../db";
-import { TeacherEntity } from "../../domain/entities";
+import { TeacherEntity, type UserEntity } from "../../domain/entities";
 import type { TeacherQuery } from "../../domain/types";
 
 export class TeacherMapper {
-  static toTeacherEntity(teacher: Teacher): TeacherEntity {
+  static toTeacherEntity(
+    teacher: Teacher & { user?: UserEntity }
+  ): TeacherEntity {
     return new TeacherEntity(
       teacher.id,
       teacher.department,
       teacher.userId,
       teacher.createdAt,
-      teacher.updatedAt
+      teacher.updatedAt,
+      teacher.user
     );
   }
 
