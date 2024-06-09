@@ -24,6 +24,10 @@ import type {
   UpdateUserDTO,
 } from "../../domain/dtos/user";
 import { BcryptAdapter } from "../../config";
+import {
+  getUsersWithStudentRoleWithoutStudent,
+  getUsersWithTeacherRoleWithoutTeacher,
+} from "../../db/queries";
 
 type UserQueryFilters = Omit<UserQuery, "sortDir" | "ordering">;
 type HashFunction = (password: string) => string;
@@ -37,10 +41,10 @@ export class UserDatasourceImpl implements UserDatasource {
 
   async findAll(query: QueryParams): Promise<ListResponseEntity<UserEntity>> {
     const { limit, offset, otherParams } = query;
-    const { sortDir, gender, ordering, role } =
+    const { sortDir, gender, ordering, role, firstName, surname } =
       UserMapper.userQueryFromQueryParams(otherParams);
 
-    const whereSQL = this.withFilters({ gender, role });
+    const whereSQL = this.withFilters({ gender, role, firstName, surname });
 
     const countResult = await this.countAll(whereSQL);
 
@@ -202,35 +206,46 @@ export class UserDatasourceImpl implements UserDatasource {
     (Pick<UserEntity, "id"> & { fullName: string })[]
   > {
     const [surname, firstName] = query.fullName?.split(",") ?? [];
-    const result = await db
-      .select({
-        id: users.id,
-        fullName: sql<string>`concat(upper(${users.surname}),', ',${users.firstName})`,
-      })
-      .from(users)
-      .leftJoin(students, eq(users.id, students.userId))
-      .where(
-        and(
-          eq(users.role, "student"),
-          isNull(students.userId),
-          isNull(users.deletedAt),
-          surname ? ilike(users.surname, `%${surname}%`) : undefined,
-          firstName ? ilike(users.firstName, `%${firstName}%`) : undefined
-        )
-      );
+    const result = await getUsersWithStudentRoleWithoutStudent(
+      surname,
+      firstName
+    );
 
-    const entities = result.map((user) => UserMapper.userWithoutStudents(user));
+    const entities = result.map((user) => UserMapper.basicUser(user));
 
     return entities;
   }
 
-  private withFilters({ gender, role }: UserQueryFilters): SQL | undefined {
+  async findUsersWithoutTeacher(query: {
+    fullName?: string | undefined;
+  }): Promise<(Pick<UserEntity, "id"> & { fullName: string })[]> {
+    const [surname, firstName] = query.fullName?.split(",") ?? [];
+    const result = await getUsersWithTeacherRoleWithoutTeacher(
+      surname,
+      firstName
+    );
+    const entities = result.map((user) => UserMapper.basicUser(user));
+
+    return entities;
+  }
+
+  private withFilters(queryFilters: UserQueryFilters): SQL | undefined {
+    const { gender, role, firstName, surname } = queryFilters;
+
     const filterSQls: SQL[] = [];
     if (gender) {
       filterSQls.push(sql`${users.gender} = ${gender}`);
     }
     if (role) {
       filterSQls.push(sql`${users.role} = ${role}`);
+    }
+
+    if (firstName) {
+      filterSQls.push(ilike(users.firstName, `%${firstName}%`));
+    }
+
+    if (surname) {
+      filterSQls.push(ilike(users.surname, `%${surname}%`));
     }
 
     if (!filterSQls.length) {

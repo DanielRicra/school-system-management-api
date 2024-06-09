@@ -27,4 +27,7 @@ export abstract class UserDatasource {
   abstract findUsersWithoutStudent(query: {
     fullName?: string;
   }): Promise<(Pick<UserEntity, "id"> & { fullName: string })[]>;
+  abstract findUsersWithoutTeacher(query: {
+    fullName?: string;
+  }): Promise<(Pick<UserEntity, "id"> & { fullName: string })[]>;
 }

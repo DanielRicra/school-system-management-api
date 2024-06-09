@@ -51,4 +51,10 @@ export class UserRepositoryImpl implements UserRepository {
   > {
     return this.userDatasource.findUsersWithoutStudent(query);
   }
+
+  findUsersWithoutTeacher(query: { fullName?: string | undefined }): Promise<
+    (Pick<UserEntity, "id"> & { fullName: string })[]
+  > {
+    return this.userDatasource.findUsersWithoutTeacher(query);
+  }
 }
