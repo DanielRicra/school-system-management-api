@@ -9,6 +9,8 @@ import {
   Remove,
   Update,
   UpdatePassword,
+  FindUsersWithoutStudent,
+  FindUsersWithoutTeacher,
 } from "../../domain/use-cases/user";
 import { computePaginationOffsetAndLimit } from "../utils";
 import {
@@ -18,7 +20,6 @@ import {
   UserParamsDTO,
 } from "../../domain/dtos/user";
 import { CreateUserDTO } from "../../domain/dtos/user";
-import { FindUsersWithoutStudent } from "../../domain/use-cases/user/find-users-without-student";
 
 export class UserController extends MainController {
   constructor(private readonly userRepository: UserRepository) {
@@ -148,6 +149,15 @@ export class UserController extends MainController {
     const { full_name: fullName } = req.query;
 
     new FindUsersWithoutStudent(this.userRepository)
+      .execute({ fullName: fullName as string })
+      .then((data) => res.json(data))
+      .catch((err) => this.handleErrors(err, res));
+  };
+
+  findUsersWithoutTeacher: RequestHandler = (req, res) => {
+    const { full_name: fullName } = req.query;
+
+    new FindUsersWithoutTeacher(this.userRepository)
       .execute({ fullName: fullName as string })
       .then((data) => res.json(data))
       .catch((err) => this.handleErrors(err, res));

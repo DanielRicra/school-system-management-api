@@ -14,6 +14,7 @@ export class UserRoutes {
 
     router.get("/", AuthMiddleware.checkUserRole("admin"), controller.findAll);
     router.get("/without-student", controller.findUsersWithoutStudent);
+    router.get("/without-teacher", controller.findUsersWithoutTeacher);
     router.get(
       "/:id",
       AuthorizationMiddleware.checkOwnerOrAdmin,
