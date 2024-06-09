@@ -36,6 +36,8 @@ export type UserQuery = {
   role?: User["role"];
   gender?: string;
   deletedAt?: Date | null;
+  firstName?: string;
+  surname?: string;
 };
 
 export type StudentQuery = {
@@ -51,6 +53,8 @@ export type TeacherQuery = {
   ordering?: keyof Teacher;
   sortDir: SortDir;
   department?: string;
+  firstName?: string;
+  surname?: string;
 };
 
 export type CourseQuery = {
