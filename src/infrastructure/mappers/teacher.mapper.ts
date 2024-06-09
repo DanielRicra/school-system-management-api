@@ -19,7 +19,7 @@ export class TeacherMapper {
   static teacherQueryFromQueryParams(query: {
     [key: string]: string | undefined;
   }): TeacherQuery {
-    const { ordering, department } = query;
+    const { ordering, department, first_name: firstName, surname } = query;
 
     let sortField: string | undefined = ordering?.startsWith("-")
       ? ordering.slice(1)
@@ -40,6 +40,8 @@ export class TeacherMapper {
       ordering: sortField as TeacherQuery["ordering"],
       sortDir: ordering?.startsWith("-") ? "desc" : "asc",
       department,
+      firstName,
+      surname,
     };
   }
 }

@@ -1,4 +1,4 @@
-import { type SQL, sql, count, asc, desc, eq } from "drizzle-orm";
+import { type SQL, sql, count, asc, desc, eq, ilike } from "drizzle-orm";
 import type { TeacherDatasource } from "../../domain/datasources";
 import { ListResponseEntity, type TeacherEntity } from "../../domain/entities";
 import type { QueryParams } from "../../types";
@@ -19,11 +19,13 @@ export class TeacherDatasourceImpl implements TeacherDatasource {
     query: QueryParams
   ): Promise<ListResponseEntity<TeacherEntity>> {
     const { limit, offset, otherParams } = query;
-    const { sortDir, ordering, department } =
+    const { sortDir, ordering, department, firstName, surname } =
       TeacherMapper.teacherQueryFromQueryParams(otherParams);
 
     const whereSQL = this.withFilters({
       department,
+      firstName,
+      surname,
     });
 
     const countResult = await this.countAll(whereSQL);
@@ -132,10 +134,20 @@ export class TeacherDatasourceImpl implements TeacherDatasource {
     }
   }
 
-  private withFilters({ department }: TeacherQueryFilters): SQL | undefined {
+  private withFilters(queryFilters: TeacherQueryFilters): SQL | undefined {
+    const { department, firstName, surname } = queryFilters;
+
     const filterSQls: SQL[] = [];
     if (department) {
-      filterSQls.push(sql`${teachers.department} = ${department}`);
+      filterSQls.push(ilike(teachers.department, `%${department}%`));
+    }
+
+    if (firstName) {
+      filterSQls.push(ilike(users.firstName, `%${firstName}%`));
+    }
+
+    if (surname) {
+      filterSQls.push(ilike(users.surname, `%${surname}%`));
     }
 
     if (!filterSQls.length) {
@@ -146,7 +158,11 @@ export class TeacherDatasourceImpl implements TeacherDatasource {
   }
 
   private async countAll(whereSql?: SQL): Promise<number> {
-    let qb = db.select({ count: count() }).from(teachers).$dynamic();
+    let qb = db
+      .select({ count: count() })
+      .from(teachers)
+      .innerJoin(users, eq(teachers.userId, users.id))
+      .$dynamic();
 
     if (whereSql) {
       qb = qb.where(whereSql);
