@@ -1,4 +1,4 @@
-import type { User } from "../../db";
+import type { Teacher, User } from "../../db";
 import { UserEntity } from "../../domain/entities";
 import type { UserQuery } from "../../domain/types";
 
@@ -29,7 +29,7 @@ export class UserMapper {
     );
   }
 
-  static userWithoutStudents(user: Pick<User, "id"> & { fullName: string }) {
+  static basicUser(user: Pick<User, "id"> & { fullName: string }) {
     return {
       id: user.id,
       fullName: user.fullName,
