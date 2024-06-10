@@ -8,6 +8,9 @@ import {
   type User,
   type Classroom,
   teachers,
+  type Teacher,
+  courses,
+  type Course,
 } from "./drizzle/schema";
 
 export function getStudentById(
@@ -48,6 +51,20 @@ export function getClassroomById(
   id: Classroom["id"]
 ): Promise<Array<Classroom>> {
   return db.select().from(classrooms).where(eq(classrooms.id, id)).limit(1);
+}
+
+export function getTeacherById(id: Teacher["id"]): Promise<Array<Teacher>> {
+  return db.select().from(teachers).where(eq(teachers.id, id));
+}
+
+export function getCoursesByTeacherId(
+  teacherId: Teacher["id"]
+): Promise<Array<Course>> {
+  return db
+    .select({ ...getTableColumns(courses) })
+    .from(courses)
+    .leftJoin(teachers, eq(courses.teacherId, teachers.id))
+    .where(eq(courses.teacherId, teacherId));
 }
 
 export function getTeachersWithUser() {
