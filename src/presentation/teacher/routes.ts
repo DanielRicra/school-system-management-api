@@ -18,6 +18,8 @@ export class TeacherRoutes {
       .patch(controller.patch)
       .delete(controller.remove);
 
+    router.route("/:id/courses").get(controller.findTeacherCourses);
+
     return router;
   }
 }
