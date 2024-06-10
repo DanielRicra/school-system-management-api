@@ -1,8 +1,17 @@
 import { type SQL, sql, count, asc, desc, eq, ilike } from "drizzle-orm";
 import type { TeacherDatasource } from "../../domain/datasources";
-import { ListResponseEntity, type TeacherEntity } from "../../domain/entities";
+import {
+  type CourseEntity,
+  ListResponseEntity,
+  type TeacherEntity,
+} from "../../domain/entities";
 import type { QueryParams } from "../../types";
-import { ListResponseMapper, TeacherMapper, UserMapper } from "../mappers";
+import {
+  CourseMapper,
+  ListResponseMapper,
+  TeacherMapper,
+  UserMapper,
+} from "../mappers";
 import type { TeacherQuery } from "../../domain/types";
 import { db, teachers, users } from "../../db";
 import { CustomError } from "../../domain/errors";
@@ -10,7 +19,11 @@ import type {
   CreateTeacherDTO,
   PatchTeacherDTO,
 } from "../../domain/dtos/teacher";
-import { getTeachersWithUser } from "../../db/queries";
+import {
+  getCoursesByTeacherId,
+  getTeacherById,
+  getTeachersWithUser,
+} from "../../db/queries";
 
 type TeacherQueryFilters = Omit<TeacherQuery, "sortDir" | "ordering">;
 
@@ -132,6 +145,21 @@ export class TeacherDatasourceImpl implements TeacherDatasource {
         `The teacher with id: '${id}' could not be found, failed to delete`
       );
     }
+  }
+
+  async findTeacherCourses(id: string): Promise<CourseEntity[]> {
+    const existingTeacher = await getTeacherById(id);
+
+    if (!existingTeacher.length) {
+      throw CustomError.notFound("Teacher not found.");
+    }
+
+    const result = await getCoursesByTeacherId(id);
+    const entities = result.map((course) =>
+      CourseMapper.toCourseEntity(course)
+    );
+
+    return entities;
   }
 
   private withFilters(queryFilters: TeacherQueryFilters): SQL | undefined {

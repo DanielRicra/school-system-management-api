@@ -3,7 +3,11 @@ import type {
   CreateTeacherDTO,
   PatchTeacherDTO,
 } from "../../domain/dtos/teacher";
-import type { ListResponseEntity, TeacherEntity } from "../../domain/entities";
+import type {
+  CourseEntity,
+  ListResponseEntity,
+  TeacherEntity,
+} from "../../domain/entities";
 import type { TeacherRepository } from "../../domain/repositories";
 import type { QueryParams } from "../../types";
 
@@ -31,5 +35,9 @@ export class TeacherRepositoryImpl implements TeacherRepository {
 
   remove(id: string): Promise<void> {
     return this.teacherDatasource.remove(id);
+  }
+
+  findTeacherCourses(id: TeacherEntity["id"]): Promise<CourseEntity[]> {
+    return this.teacherDatasource.findTeacherCourses(id);
   }
 }

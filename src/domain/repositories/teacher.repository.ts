@@ -1,6 +1,10 @@
 import type { QueryParams } from "../../types";
 import type { CreateTeacherDTO, PatchTeacherDTO } from "../dtos/teacher";
-import type { ListResponseEntity, TeacherEntity } from "../entities";
+import type {
+  CourseEntity,
+  ListResponseEntity,
+  TeacherEntity,
+} from "../entities";
 
 export abstract class TeacherRepository {
   abstract findAll(
@@ -13,4 +17,5 @@ export abstract class TeacherRepository {
     patchTeacherDTO: PatchTeacherDTO
   ): Promise<{ teacherId: TeacherEntity["id"] }>;
   abstract remove(id: TeacherEntity["id"]): Promise<void>;
+  abstract findTeacherCourses(id: TeacherEntity["id"]): Promise<CourseEntity[]>;
 }
