@@ -5,6 +5,7 @@ import {
   Create,
   FindAll,
   FindOne,
+  FindTeacherCourses,
   Patch,
   Remove,
 } from "../../domain/use-cases/teacher";
@@ -96,6 +97,22 @@ export class TeacherController extends MainController {
     new Remove(this.teacherRepository)
       .execute(teacherId)
       .then(() => res.sendStatus(204))
+      .catch((err: unknown) => this.handleErrors(err, res));
+  };
+
+  findTeacherCourses: RequestHandler = (req, res) => {
+    const teacherId = isUUIDFormat(req.params.id) ? req.params.id : undefined;
+
+    if (!teacherId) {
+      res.status(400).json({
+        message: "The id(UUID) is badly formatted.",
+      });
+      return;
+    }
+
+    new FindTeacherCourses(this.teacherRepository)
+      .execute(teacherId)
+      .then((data) => res.json(data))
       .catch((err: unknown) => this.handleErrors(err, res));
   };
 }
