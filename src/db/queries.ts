@@ -53,8 +53,14 @@ export function getClassroomById(
   return db.select().from(classrooms).where(eq(classrooms.id, id)).limit(1);
 }
 
-export function getTeacherById(id: Teacher["id"]): Promise<Array<Teacher>> {
-  return db.select().from(teachers).where(eq(teachers.id, id));
+export function getTeacherById(
+  id: Teacher["id"]
+): Promise<Array<Teacher & { user: User }>> {
+  return db
+    .select({ ...getTableColumns(teachers), user: users })
+    .from(teachers)
+    .innerJoin(users, eq(teachers.userId, users.id))
+    .where(eq(teachers.id, id));
 }
 
 export function getCoursesByTeacherId(

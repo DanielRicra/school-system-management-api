@@ -74,11 +74,12 @@ export class TeacherDatasourceImpl implements TeacherDatasource {
   }
 
   async findOne(id: string): Promise<TeacherEntity> {
-    const result = await db.select().from(teachers).where(eq(teachers.id, id));
+    const result = await getTeacherById(id);
 
     if (!result.length) throw CustomError.notFound("Teacher not found.");
 
-    return TeacherMapper.toTeacherEntity(result[0]);
+    const userEntity = UserMapper.toUserEntity(result[0].user);
+    return TeacherMapper.toTeacherEntity({ ...result[0], user: userEntity });
   }
 
   async create(createTeacherDTO: CreateTeacherDTO): Promise<TeacherEntity> {
